@@ -1,0 +1,2880 @@
+<!DOCTYPE html>
+<html lang="en" data-skin="personal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaultKey — Digital Estate Security</title>
+<!-- PWA meta tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VaultKey">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1117">
+<meta name="description" content="Digital Estate Security vault — AES-256 encrypted, works offline">
+<link rel="apple-touch-icon" sizes="192x192" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%230d1117'/%3E%3Ctext x='96' y='128' font-size='100' text-anchor='middle'%3E%F0%9F%94%90%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22VaultKey%22,%22short_name%22:%22VaultKey%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d1117%22,%22theme_color%22:%22%230d1117%22,%22description%22:%22AES-256%20encrypted%20digital%20estate%20vault%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%253Csvg%2520xmlns='http://www.w3.org/2000/svg'%2520viewBox='0%25200%2520192%2520192'%253E%253Crect%2520width='192'%2520height='192'%2520rx='32'%2520fill='%25230d1117'/%253E%253Ctext%2520x='96'%2520y='128'%2520font-size='100'%2520text-anchor='middle'%253E%25F0%259F%2594%2590%253C/text%253E%253C/svg%253E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%20maskable%22}]}">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   SKIN SYSTEM — three complete visual registers
+   Active skin set on <html data-skin="personal|legal|military">
+═══════════════════════════════════════════════════════════════ */
+
+/* ── SKIN: PERSONAL (default — clean professional SaaS) ── */
+:root, [data-skin="personal"] {
+  --bg:#0d1117; --bg2:#111820; --surface:#141e2a; --surface2:#1a2736;
+  --border:#1e3048; --border2:#2a4060;
+  --accent:#6cabdd; --accent2:#98c5e9; --accent-dark:#1a4a7a;
+  --gold:#e8a830; --gold2:#f5c842;
+  --positive:#4caf82; --negative:#e05555; --warning:#e8a830;
+  --text:#e8f0f8; --muted:#5a7a98; --muted2:#88aac8;
+  --card-bg:linear-gradient(145deg,rgba(20,30,42,.97),rgba(10,20,32,.98));
+  --card-border:rgba(108,171,221,.15);
+  --card-top:linear-gradient(90deg,#e05c2a,#e8a830,#6cabdd,#0a3d6b);
+  --logo-font:'Georgia',serif;
+  --body-font:system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono-font:'JetBrains Mono','Courier New',monospace;
+  --btn-radius:10px;
+  --card-radius:18px;
+  --skin-label:"Personal";
+}
+
+/* ── SKIN: LEGAL / FINANCIAL ── */
+[data-skin="legal"] {
+  --bg:#0e1218; --bg2:#141a22; --surface:#181f28; --surface2:#1e2733;
+  --border:#242e3c; --border2:#2e3e52;
+  --accent:#c8a96e; --accent2:#d9bf8e; --accent-dark:#6b5535;
+  --gold:#c8a96e; --gold2:#d9bf8e;
+  --positive:#4a8c6a; --negative:#8c3a3a; --warning:#b89050;
+  --text:#dde4ec; --muted:#6a7e96; --muted2:#96aabf;
+  --card-bg:linear-gradient(145deg,rgba(24,31,40,.98),rgba(14,18,24,.99));
+  --card-border:rgba(200,169,110,.12);
+  --card-top:linear-gradient(90deg,#c8a96e,#8c7248,#4a3e2e);
+  --logo-font:'Georgia',serif;
+  --body-font:'Georgia','Times New Roman',serif;
+  --mono-font:'Courier New',monospace;
+  --btn-radius:4px;
+  --card-radius:6px;
+  --skin-label:"Legal & Financial";
+}
+
+/* ── SKIN: MILITARY / GOVERNMENT ── */
+[data-skin="military"] {
+  --bg:#080e0e; --bg2:#0c1414; --surface:#101a1a; --surface2:#162020;
+  --border:#1a2c2c; --border2:#1e3838;
+  --accent:#4a9e7a; --accent2:#5ec494; --accent-dark:#1a4a3a;
+  --gold:#8ebf60; --gold2:#a8d870;
+  --positive:#4a9e7a; --negative:#c84040; --warning:#c8a030;
+  --text:#d8e8d8; --muted:#4a7060; --muted2:#6a9080;
+  --card-bg:linear-gradient(145deg,rgba(16,26,26,.98),rgba(8,14,14,.99));
+  --card-border:rgba(74,158,122,.15);
+  --card-top:linear-gradient(90deg,#4a9e7a,#2a6048,#1a3828);
+  --logo-font:'Arial Black','Arial',sans-serif;
+  --body-font:'Arial','Helvetica',sans-serif;
+  --mono-font:'Courier New',monospace;
+  --btn-radius:3px;
+  --card-radius:4px;
+  --skin-label:"Military / Government";
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE STYLES
+═══════════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:15px;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--body-font);font-size:1rem;
+  min-height:100vh;overflow-x:hidden;
+}
+[data-skin="military"] body, [data-skin="military"] { letter-spacing:.02em; }
+
+
+/* ── THEME BACKGROUNDS — pure CSS on body, no JS, no z-index issues ── */
+body { background: #0d1117; }
+[data-skin="personal"] body,
+body[data-skin="personal"],
+html[data-skin="personal"] body {
+  background: radial-gradient(ellipse 60% 50% at 70% 15%, rgba(108,171,221,.25) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 60% at 15% 85%, rgba(14,79,138,.2) 0%, transparent 65%),
+              #0d1117;
+}
+html[data-skin="legal"] body {
+  background: radial-gradient(ellipse 60% 50% at 20% 25%, rgba(200,169,110,.22) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 60% at 80% 75%, rgba(140,100,50,.16) 0%, transparent 65%),
+              #0e1218;
+}
+html[data-skin="military"] body {
+  background: radial-gradient(ellipse 60% 50% at 12% 20%, rgba(74,158,122,.25) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 60% at 88% 80%, rgba(30,80,50,.2) 0%, transparent 65%),
+              #080e0e;
+}
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:transparent;}
+.screen.active{display:flex;animation:fadeIn .3s ease;}
+#vaultScreen.active, #executorScreen.active{justify-content:flex-start;padding:0;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── CARD ── */
+.card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--card-radius);
+  padding:36px;width:500px;max-width:96vw;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--card-top);
+}
+.card.wide{width:680px;}
+
+/* ── LOGO / TITLE ── */
+.brand-lockup{text-align:center;margin-bottom:28px;}
+.brand-name{
+  font-family:var(--logo-font);font-size:32px;font-weight:700;
+  letter-spacing:.04em;
+  background:linear-gradient(135deg,var(--accent2),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+[data-skin="military"] .brand-name{
+  background:none;-webkit-text-fill-color:var(--accent2);
+  text-transform:uppercase;letter-spacing:.12em;
+}
+.brand-tagline{
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin-top:4px;
+}
+.brand-shield{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;margin:0 auto 12px;
+  background:linear-gradient(135deg,var(--accent-dark),var(--surface2));
+  border:1px solid var(--card-border);
+  border-radius:var(--card-radius);
+  font-size:22px;
+}
+
+/* ── FORM ELEMENTS ── */
+.flabel{display:block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;margin-top:16px;}
+.finput{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--btn-radius);color:var(--text);
+  font-family:var(--body-font);font-size:.9rem;
+  padding:11px 14px;margin-bottom:4px;
+  transition:border-color .2s;
+}
+.finput:focus{outline:none;border-color:var(--accent);}
+.finput::placeholder{color:var(--muted);}
+.fselect{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--btn-radius);color:var(--text);
+  font-family:var(--body-font);font-size:.9rem;
+  padding:11px 14px;margin-bottom:4px;
+}
+.ftextarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--btn-radius);color:var(--text);
+  font-family:var(--body-font);font-size:.85rem;
+  padding:10px 14px;min-height:80px;resize:vertical;
+}
+
+/* ── BUTTONS ── */
+.btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--accent-dark),var(--accent-dark));
+  border:1px solid var(--accent);border-radius:var(--btn-radius);
+  color:var(--accent2);font-family:var(--body-font);
+  font-size:.9rem;font-weight:600;letter-spacing:.04em;
+  cursor:pointer;margin-top:14px;transition:all .2s;
+}
+.btn:hover{background:var(--accent);color:var(--bg);}
+.btn.gold{border-color:var(--gold);color:var(--gold2);}
+.btn.gold:hover{background:var(--gold);color:var(--bg);}
+.btn.positive{border-color:var(--positive);color:var(--positive);}
+.btn.positive:hover{background:var(--positive);color:var(--bg);}
+.btn.danger{border-color:var(--negative);color:var(--negative);}
+.btn.danger:hover{background:var(--negative);color:var(--bg);}
+.btn.secondary{
+  background:transparent;border-color:var(--border2);
+  color:var(--muted2);margin-top:8px;
+}
+.btn.secondary:hover{border-color:var(--accent);color:var(--accent);}
+.link-btn{background:none;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;margin-top:10px;display:block;text-align:center;padding:6px;}
+.link-btn:hover{color:var(--accent);}
+
+/* ── INFO BOXES ── */
+.infobox{
+  background:rgba(108,171,221,.06);border:1px solid rgba(108,171,221,.15);
+  border-radius:var(--btn-radius);padding:12px 14px;
+  font-size:.82rem;color:var(--muted2);line-height:1.6;margin:12px 0;
+}
+.infobox.warn{background:rgba(232,168,48,.06);border-color:rgba(232,168,48,.2);color:var(--warning);}
+.infobox.legal{background:rgba(200,169,110,.06);border-color:rgba(200,169,110,.18);color:var(--accent2);}
+.infobox.danger{background:rgba(224,85,85,.06);border-color:rgba(224,85,85,.2);color:var(--negative);}
+
+/* ── DOTS (setup progress) ── */
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .3s;}
+.dot.active{background:var(--accent);}
+.dot.done{background:var(--positive);}
+
+/* ── TIER GRID ── */
+.tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.tier-card{
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:var(--btn-radius);padding:16px 14px;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.tier-card:hover{border-color:var(--accent);}
+.tier-card.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+.tier-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tier-color,var(--accent));}
+.tier-name{font-size:16px;font-weight:700;margin-bottom:2px;color:var(--tier-color,var(--accent));}
+.tier-price{font-size:13px;color:var(--gold);margin-bottom:8px;font-weight:600;}
+.tier-feat{font-size:12px;color:var(--muted2);line-height:1.8;}
+.tier-feat div::before{content:'✓  ';}
+.tier-badge{position:absolute;top:8px;right:8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:rgba(108,171,221,.12);border:1px solid rgba(108,171,221,.25);color:var(--accent);}
+
+/* ── EXECUTOR SETUP CARD ── */
+.exec-setup{background:rgba(155,127,232,.04);border:1px solid rgba(155,127,232,.18);border-radius:var(--btn-radius);padding:18px;margin:12px 0;}
+.exec-setup-title{font-size:13px;font-weight:700;color:#9b7fe8;margin-bottom:2px;}
+.exec-setup-sub{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+
+/* ═══════════════════════════════════════════════════════════════
+   VAULT SCREEN — OWNER VIEW
+═══════════════════════════════════════════════════════════════ */
+.vhdr{
+  position:sticky;top:0;z-index:50;
+  background:rgba(13,17,23,.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+  display:flex;align-items:center;gap:10px;
+  padding:0 24px;min-height:64px;flex-wrap:nowrap;overflow:visible;
+}
+[data-skin="legal"] .vhdr{background:rgba(14,18,24,.98);height:64px;}
+[data-skin="military"] .vhdr{background:rgba(8,14,14,.99);border-bottom-color:#1a2c2c;height:64px;}
+body.light-mode .vhdr{background:rgba(240,244,248,.98);height:64px;}
+
+.vlogo{display:flex;align-items:center;gap:8px;flex-shrink:0;height:64px;width:160px;}
+.vlogo-shield{font-size:22px;line-height:1;flex-shrink:0;}
+.vlogo-text{font-family:'Georgia','Times New Roman',serif;font-size:20px;font-weight:700;color:var(--accent2);line-height:1;white-space:nowrap;letter-spacing:.01em;}
+.vlogo-sub{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1;margin-top:4px;white-space:nowrap;font-family:system-ui,sans-serif;}
+.vsearch{
+  width:220px;flex-shrink:0;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--btn-radius);color:var(--text);
+  font-family:system-ui,sans-serif;font-size:13px;
+  padding:8px 13px;
+}
+.vsearch:focus{outline:none;border-color:var(--accent);}
+.hdrbtn{
+  padding:8px 13px;background:transparent;
+  border:1px solid var(--border2);border-radius:var(--btn-radius);
+  color:var(--muted2);font-family:var(--body-font);font-size:12px;
+  cursor:pointer;white-space:nowrap;transition:all .2s;
+  line-height:1;flex-shrink:0;height:34px;display:flex;align-items:center;
+}
+.hdrbtn:hover{border-color:var(--accent);color:var(--accent);}
+.hdrbtn.accent{border-color:var(--accent);color:var(--accent);}
+.hdrbtn.gold{border-color:var(--gold);color:var(--gold);}
+
+.vcontent{max-width:860px;width:100%;margin:0 auto;padding:16px 20px 40px;}
+.stats-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.stat-chip{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--btn-radius);padding:8px 14px;
+  font-size:12px;color:var(--muted2);
+}
+.stat-chip strong{color:var(--text);font-size:16px;display:block;}
+.cats{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.cat-btn{
+  padding:5px 12px;background:var(--surface);
+  border:1px solid var(--border);border-radius:20px;
+  color:var(--muted);font-size:12px;cursor:pointer;transition:all .2s;
+}
+.cat-btn.active,.cat-btn:hover{border-color:var(--accent);color:var(--accent);}
+.elist{display:flex;flex-direction:column;gap:6px;}
+.ecard{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--btn-radius);padding:12px 14px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  transition:border-color .15s;
+}
+.ecard:hover{border-color:var(--accent);}
+.ecard.epp{border-left:3px solid var(--warning);}
+.ecard.eps{border-left:3px solid var(--negative);opacity:.7;}
+.eicon{font-size:20px;width:32px;text-align:center;flex-shrink:0;}
+.einfo{flex:1;min-width:0;}
+.ename{font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.euser{font-size:.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ecat{font-size:.72rem;color:var(--muted);flex-shrink:0;}
+.eacts{display:flex;gap:4px;flex-shrink:0;}
+.ibtn{
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--btn-radius);font-size:.8rem;cursor:pointer;color:var(--muted);
+  transition:all .15s;
+}
+.ibtn:hover{border-color:var(--accent);color:var(--accent);}
+.ibtn.del:hover{border-color:var(--negative);color:var(--negative);}
+.pb{font-size:.65rem;letter-spacing:.06em;padding:1px 5px;border-radius:3px;margin-left:6px;font-weight:600;}
+.pb-p{background:rgba(232,168,48,.12);color:var(--warning);border:1px solid rgba(232,168,48,.3);}
+.pb-s{background:rgba(224,85,85,.1);color:var(--negative);border:1px solid rgba(224,85,85,.25);}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty .big{font-size:2.5rem;margin-bottom:12px;}
+
+/* ── ALARM BANNER ── */
+.alarm-banner{
+  display:none;background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.3);
+  border-radius:var(--btn-radius);padding:14px 16px;margin-bottom:14px;
+}
+.alarm-banner.show{display:block;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{border-color:rgba(224,85,85,.3)}50%{border-color:rgba(224,85,85,.7)}}
+.alarm-title{font-size:14px;font-weight:700;color:var(--negative);margin-bottom:6px;}
+.alarm-detail{font-size:12px;color:var(--muted2);}
+
+/* ── TIER PILL ── */
+.tier-pill{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;border:1px solid var(--accent);
+  color:var(--accent);background:rgba(108,171,221,.06);
+}
+
+/* ── SKIN SWITCHER ── */
+.skin-switcher{
+  display:flex;gap:4px;background:var(--surface);
+  border:1px solid var(--border);border-radius:20px;padding:3px;
+}
+.skin-btn{
+  padding:4px 10px;border-radius:16px;font-size:10px;letter-spacing:.06em;
+  text-transform:uppercase;border:none;background:transparent;
+  color:var(--muted);cursor:pointer;transition:all .2s;
+}
+.skin-btn.active{background:var(--accent);color:var(--bg);font-weight:700;}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXECUTOR SCREEN — the key deliverable
+═══════════════════════════════════════════════════════════════ */
+#executorScreen{background:var(--bg);}
+
+.ex-hdr{
+  background:linear-gradient(135deg,var(--surface),var(--bg2));
+  border-bottom:1px solid var(--border);
+  padding:20px 28px;
+}
+.ex-hdr-inner{max-width:900px;margin:0 auto;display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+.ex-brand{flex:1;min-width:200px;}
+.ex-brand-name{font-family:var(--logo-font);font-size:22px;font-weight:700;color:var(--accent2);}
+[data-skin="military"] .ex-brand-name{text-transform:uppercase;letter-spacing:.1em;}
+.ex-brand-tag{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.ex-title{font-size:26px;font-weight:700;color:var(--text);margin-top:8px;line-height:1.2;}
+[data-skin="legal"] .ex-title{font-family:'Georgia',serif;}
+.ex-meta{font-size:12px;color:var(--muted2);margin-top:6px;line-height:1.8;}
+.ex-meta strong{color:var(--accent);}
+.ex-status{
+  flex-shrink:0;text-align:right;
+  background:rgba(74,175,82,.06);border:1px solid rgba(74,175,82,.2);
+  border-radius:var(--btn-radius);padding:12px 16px;
+}
+.ex-status-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.ex-status-val{font-size:13px;font-weight:700;color:var(--positive);}
+.ex-audit{font-size:11px;color:var(--muted);margin-top:4px;}
+
+.ex-content{max-width:900px;width:100%;margin:0 auto;padding:20px 28px 60px;}
+
+/* ── ESTATE SECTIONS ── */
+.ex-section{margin-bottom:24px;}
+.ex-section-hdr{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:10px;padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+.ex-section-icon{font-size:18px;}
+.ex-section-title{font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--text);}
+.ex-section-count{font-size:11px;color:var(--muted);margin-left:auto;}
+
+/* ── ESTATE CARDS ── */
+.ex-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--btn-radius);padding:14px 16px;
+  margin-bottom:8px;
+}
+.ex-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ex-card-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0;}
+.ex-card-name{font-size:15px;font-weight:700;}
+.ex-card-cat{font-size:11px;color:var(--muted);margin-left:auto;}
+.ex-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:560px){.ex-fields{grid-template-columns:1fr;}}
+.ex-field{background:var(--surface2);border:1px solid var(--border);border-radius:var(--btn-radius);padding:10px 12px;}
+.ex-field-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.ex-field-val{font-size:13px;color:var(--text);word-break:break-all;font-family:var(--mono-font);}
+.ex-field-val.masked{color:var(--muted);letter-spacing:.15em;font-size:14px;}
+.ex-copy-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ex-copy-btn{
+  padding:5px 10px;background:transparent;
+  border:1px solid var(--border2);border-radius:var(--btn-radius);
+  color:var(--muted2);font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.ex-copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ex-copy-btn.done{border-color:var(--positive);color:var(--positive);}
+.ex-show-btn{
+  padding:4px 9px;background:transparent;
+  border:1px solid var(--border2);border-radius:var(--btn-radius);
+  color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;
+}
+.ex-show-btn:hover{border-color:var(--warning);color:var(--warning);}
+.ex-notes{
+  margin-top:8px;padding:10px 12px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--btn-radius);
+  font-size:12px;color:var(--muted2);line-height:1.6;
+}
+.ex-notes-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+
+/* ── PRIVATE / SEALED BLOCKS ── */
+.ex-blocked{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--btn-radius);padding:14px 16px;
+  margin-bottom:8px;display:flex;align-items:center;gap:12px;
+  opacity:.7;
+}
+.ex-blocked-icon{font-size:20px;flex-shrink:0;}
+.ex-blocked-name{font-size:14px;font-weight:600;}
+.ex-blocked-desc{font-size:12px;color:var(--muted);margin-top:2px;}
+.ex-blocked.priv{border-left:3px solid var(--warning);}
+.ex-blocked.sealed{border-left:3px solid var(--negative);}
+
+/* ── INSTRUCTIONS BOX ── */
+.ex-instructions{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--btn-radius);padding:20px;margin-bottom:20px;
+}
+.ex-instructions-title{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:10px;letter-spacing:.04em;}
+.ex-step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.ex-step-num{
+  flex-shrink:0;width:22px;height:22px;
+  background:var(--accent-dark);border:1px solid var(--accent);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--accent2);
+}
+.ex-step-text{font-size:13px;color:var(--muted2);line-height:1.5;padding-top:2px;}
+
+/* ── LEGAL NOTICE ── */
+.ex-legal{
+  border:1px solid var(--border);border-radius:var(--btn-radius);
+  padding:14px 16px;margin-bottom:20px;
+  font-size:12px;color:var(--muted);line-height:1.6;
+}
+[data-skin="legal"] .ex-legal{border-color:rgba(200,169,110,.2);color:var(--muted2);}
+.ex-legal strong{color:var(--accent);}
+.ex-legal-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--positive);border:1px solid rgba(74,175,82,.25);
+  border-radius:3px;padding:2px 8px;margin-bottom:8px;
+}
+
+/* ── AUDIT NOTICE ── */
+.ex-audit-notice{
+  background:rgba(232,168,48,.04);border:1px solid rgba(232,168,48,.15);
+  border-radius:var(--btn-radius);padding:12px 16px;margin-bottom:16px;
+  font-size:12px;color:var(--muted2);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════════════════════════ */
+.overlay{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:16px;
+}
+.overlay.open{display:flex;}
+.modal{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--card-radius);padding:28px;
+  width:500px;max-width:100%;max-height:90vh;overflow-y:auto;
+  position:relative;box-shadow:0 32px 80px rgba(0,0,0,.6);
+}
+.mtitle{font-size:1.1rem;font-weight:700;margin-bottom:16px;padding-right:28px;}
+.mclose{
+  position:absolute;top:16px;right:16px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:50%;width:28px;height:28px;
+  color:var(--muted);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.mclose:hover{color:var(--text);border-color:var(--accent);}
+.macts{display:flex;gap:8px;margin-top:20px;justify-content:flex-end;}
+.mbtn{
+  padding:9px 18px;border-radius:var(--btn-radius);
+  font-family:var(--body-font);font-size:.85rem;
+  cursor:pointer;border:1px solid var(--border2);
+  background:transparent;color:var(--muted2);transition:all .2s;
+}
+.mbtn.save{border-color:var(--accent);color:var(--accent);}
+.mbtn.save:hover{background:var(--accent);color:var(--bg);}
+.mbtn.cancel:hover{border-color:var(--muted);color:var(--text);}
+.mbtn.danger{border-color:var(--negative);color:var(--negative);}
+.mbtn.danger:hover{background:var(--negative);color:var(--bg);}
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.errmsg{font-size:.78rem;color:var(--negative);min-height:16px;margin-top:4px;}
+
+/* ── PRIVACY SELECTOR ── */
+.privacy-selector{margin:14px 0;}
+.privacy-label-top{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.privacy-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.p-opt{
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:var(--btn-radius);padding:10px 8px;
+  text-align:center;cursor:pointer;transition:all .2s;
+}
+.p-opt:hover{border-color:var(--accent);}
+.p-opt.pe{border-color:var(--positive);}
+.p-opt.pp{border-color:var(--warning);}
+.p-opt.ps{border-color:var(--negative);}
+.p-icon{font-size:18px;margin-bottom:3px;}
+.p-name{font-size:10px;letter-spacing:.08em;font-weight:700;margin-bottom:3px;}
+.p-opt.pe .p-name{color:var(--positive);}
+.p-opt.pp .p-name{color:var(--warning);}
+.p-opt.ps .p-name{color:var(--negative);}
+.p-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+
+/* ── PASSWORD STRENGTH ── */
+.sbar{height:3px;background:var(--border);border-radius:2px;margin:6px 0 2px;}
+.sfill{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%;}
+.slbl{font-size:11px;margin-bottom:6px;}
+
+/* ── TOGGLE ── */
+.toggle{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:11px;transition:.3s;}
+.toggle input:checked + .toggle-track{background:var(--accent);}
+.toggle-thumb{position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(18px);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.tname{font-size:13px;font-weight:600;}
+.tdesc{font-size:11px;color:var(--muted);}
+
+/* ── SETTINGS SECTION ── */
+.settings-section{margin-bottom:20px;}
+.sshead{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:6px;}
+
+/* ── DEL CONFIRM ── */
+.del-confirm{display:none;background:rgba(224,85,85,.06);border:1px solid rgba(224,85,85,.2);border-radius:var(--btn-radius);padding:14px;margin-top:10px;}
+.del-confirm.show{display:block;}
+.del-hint{font-size:11px;color:var(--muted);margin-top:6px;}
+
+/* ── PW ACTIONS ── */
+.pw-row{display:flex;gap:6px;align-items:flex-end;}
+.pw-row .finput{margin-bottom:0;flex:1;}
+.pwbtn{padding:11px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--btn-radius);color:var(--muted2);font-size:12px;cursor:pointer;white-space:nowrap;}
+.pwbtn:hover{border-color:var(--accent);color:var(--accent);}
+.pw-actions{display:flex;align-items:center;gap:8px;margin-top:4px;min-height:20px;}
+.pw-orig-label{font-size:11px;color:var(--muted);}
+
+/* ── DIGIT INPUTS ── */
+.digit-row{display:flex;gap:8px;justify-content:center;margin:12px 0;}
+.digit{
+  width:44px;height:52px;text-align:center;
+  background:var(--surface2);border:2px solid var(--border2);
+  border-radius:var(--btn-radius);color:var(--text);font-size:1.4rem;
+  font-family:system-ui,sans-serif;font-weight:600;
+  cursor:text;transition:border-color .15s;
+  caret-color:transparent;
+}
+.digit:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px rgba(108,171,221,.15);caret-color:var(--accent);}
+.digit:not(:placeholder-shown){border-color:var(--positive);}
+
+/* ── LOCK TABS ── */
+.ltabs{display:flex;gap:0;margin-bottom:16px;background:var(--surface2);border-radius:var(--btn-radius);padding:3px;}
+.ltab{
+  flex:1;padding:8px;background:transparent;border:none;
+  color:var(--muted);font-family:var(--body-font);font-size:12px;
+  border-radius:calc(var(--btn-radius) - 2px);cursor:pointer;transition:all .2s;
+  text-align:center;
+}
+.ltab.active{background:var(--accent-dark);color:var(--accent2);border:1px solid var(--accent);}
+
+/* ── EXPORT EXECUTOR MODAL ── */
+.ex-export-box{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--btn-radius);padding:14px;margin:12px 0;}
+.ex-export-code{
+  font-family:var(--mono-font);font-size:18px;letter-spacing:.2em;
+  color:var(--gold2);text-align:center;padding:12px;
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--btn-radius);
+  margin:8px 0;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--btn-radius);padding:10px 20px;
+  font-size:13px;color:var(--muted2);
+  opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:999;
+}
+.toast.show{opacity:1;}
+.toast.show.green{border-color:var(--positive);color:var(--positive);}
+
+
+/* ── ACCESSIBILITY CONTROLS (in header) ── */
+.a11y-bar{
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+  padding:0 4px;border-left:1px solid var(--border);margin-left:4px;
+}
+.ab-btn{background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);transition:color .2s;padding:4px;}
+.ab-btn:hover{color:var(--text);}
+.ab-a-sm{font-size:10px;color:var(--muted);line-height:1;}
+.ab-a-lg{font-size:14px;color:var(--muted);line-height:1;}
+.fs-slider-wrap{display:flex;align-items:center;gap:4px;}
+
+
+/* ── LIGHT MODE ── */
+body.light-mode{
+  --bg:#f0f4f8;--bg2:#e8eef4;--surface:#ffffff;--surface2:#f4f7fa;
+  --border:#ccd6e0;--border2:#b8c8d8;
+  --text:#0e1c2a;--muted:#4a6a88;--muted2:#2a4a68;
+  --card-bg:linear-gradient(145deg,rgba(255,255,255,.98),rgba(240,248,255,.97));
+  --card-border:rgba(60,120,200,.15);
+}
+body.light-mode .vhdr{background:rgba(240,244,248,.97);border-color:var(--border);}
+body.light-mode .card{box-shadow:0 8px 32px rgba(0,0,0,.1);}
+body.light-mode .modal{background:var(--bg);border-color:var(--border2);}
+body.light-mode .overlay{background:rgba(0,0,0,.4);}
+body.light-mode .finput,
+body.light-mode .fselect,
+body.light-mode .ftextarea{background:#fff;border-color:var(--border2);color:var(--text);}
+body.light-mode .finput::placeholder,
+body.light-mode .fselect::placeholder{color:var(--muted);}
+body.light-mode .infobox{background:rgba(60,120,200,.05);border-color:rgba(60,120,200,.2);color:var(--muted2);}
+body.light-mode .infobox.warn{background:rgba(180,120,0,.05);border-color:rgba(180,120,0,.25);}
+body.light-mode .infobox.legal{background:rgba(60,120,200,.04);border-color:rgba(60,120,200,.18);}
+body.light-mode .infobox.danger{background:rgba(180,40,40,.05);border-color:rgba(180,40,40,.2);}
+body.light-mode .ecard{background:#fff;border-color:var(--border);}
+body.light-mode .ecard:hover{border-color:var(--accent);}
+body.light-mode .stat-chip,
+body.light-mode .cat-btn{background:#fff;border-color:var(--border);color:var(--muted2);}
+body.light-mode .ibtn{background:var(--surface2);border-color:var(--border);color:var(--muted);}
+body.light-mode .ex-hdr{background:linear-gradient(135deg,#eaf1f8,#dce8f4);}
+body.light-mode .ex-card,
+body.light-mode .ex-instructions,
+body.light-mode .ex-legal,
+body.light-mode .ex-blocked{background:#fff;border-color:var(--border);}
+body.light-mode .ex-field{background:var(--surface2);border-color:var(--border);}
+body.light-mode .ex-field-val{color:var(--text);}
+body.light-mode .settings-section .tname{color:var(--text);}
+body.light-mode .brand-name,
+body.light-mode .card-title{-webkit-text-fill-color:transparent;}
+body.light-mode .tier-card{background:var(--surface2);border-color:var(--border);}
+body.light-mode .p-opt{background:var(--surface2);border-color:var(--border);}
+body.light-mode .digit{background:#fff;border-color:var(--border2);color:var(--text);}
+body.light-mode .ltab{color:var(--muted);}
+body.light-mode .alarm-banner{background:rgba(180,40,40,.05);}
+body.light-mode .toggle-row{border-color:var(--border);}
+body.light-mode .skin-switcher{background:var(--surface2);border-color:var(--border);}
+body.light-mode .skin-btn{color:var(--muted2);}
+body.light-mode .del-confirm{background:rgba(180,40,40,.04);}
+body.light-mode .ex-audit-notice{background:rgba(180,120,0,.04);border-color:rgba(180,120,0,.15);}
+body.light-mode #executorScreen{background:var(--bg);}
+
+
+/* Screens sit above background */
+.screen{position:relative;z-index:1;}
+.vhdr{z-index:50;}
+.overlay{z-index:100;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .card{padding:24px 20px;}
+  .ex-hdr,.ex-content{padding-left:16px;padding-right:16px;}
+  .ex-fields{grid-template-columns:1fr;}
+  .privacy-opts{grid-template-columns:1fr;}
+  .tier-grid{grid-template-columns:1fr;}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — PWA
+   Breakpoints: 768px (tablet), 600px (large phone), 400px (small phone)
+═══════════════════════════════════════════════════════════════ */
+
+/* Safe area insets for notched phones (iPhone X+, Android notches) */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.vhdr {
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+
+/* ── TABLET (≤768px) ── */
+@media (max-width:768px) {
+  .card { width: 100%; max-width: 480px; padding: 28px 24px; }
+  .card.wide { width: 100%; max-width: 540px; }
+  .modal { width: 100%; max-width: 100%; margin: 0; padding: 24px 20px; }
+  .overlay { align-items: flex-end; padding: 0; }
+  .overlay .modal {
+    border-radius: var(--card-radius) var(--card-radius) 0 0;
+    max-height: 90vh;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+  .vcontent { padding: 12px 16px 32px; }
+  .ex-content { padding: 16px 16px 40px; }
+  .ex-hdr { padding: 16px; }
+  .ex-hdr-inner { gap: 12px; }
+}
+
+/* ── PHONE (≤600px) ── */
+@media (max-width:600px) {
+  /* Header: collapse to two rows */
+  .vhdr {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    padding: 8px 14px;
+    gap: 6px;
+    padding-top: max(8px, env(safe-area-inset-top));
+  }
+  .vlogo { width: auto; height: auto; }
+  .vlogo-text { font-size: 18px; }
+  .vlogo-sub { display: none; }  /* Hide sub-label on small screens */
+  .vsearch {
+    order: 10;  /* Move search to second row */
+    width: 100%;
+    flex-basis: 100%;
+    margin-top: 2px;
+  }
+
+  /* Action buttons: scrollable row */
+  .vhdr > div:last-child {
+    order: 5;
+    margin-left: 0;
+    width: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .vhdr > div:last-child::-webkit-scrollbar { display: none; }
+
+  /* Skin switcher — smaller on mobile */
+  .skin-switcher { flex-shrink: 0; }
+  .skin-btn { padding: 3px 7px; font-size: 9px; }
+
+  /* Header buttons — smaller tap targets still usable */
+  .hdrbtn { padding: 6px 9px; font-size: 11px; height: 30px; }
+
+  /* A11y bar — tighter */
+  .a11y-bar { padding: 0 2px; gap: 4px; }
+  .a11y-bar input[type=range] { width: 50px; }
+
+  /* Cards fill width */
+  .card { width: 100%; max-width: 100%; border-radius: 12px; padding: 24px 16px; }
+  .card.wide { width: 100%; max-width: 100%; }
+  .card::before { border-radius: 12px 12px 0 0; }
+
+  /* Tier grid: single column */
+  .tier-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* Entry cards */
+  .ecard { padding: 10px 12px; gap: 8px; }
+  .ecat { display: none; }  /* Hide category label on small screens */
+  .eacts { gap: 2px; }
+  .ibtn { width: 32px; height: 32px; }  /* Bigger tap targets */
+
+  /* Stats row */
+  .stats-row { gap: 6px; }
+  .stat-chip { padding: 6px 10px; }
+  .stat-chip strong { font-size: 1rem; }
+
+  /* Modal: full bottom sheet */
+  .overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 92vh;
+    padding: 24px 18px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  /* Privacy opts: 3-col still works, smaller padding */
+  .privacy-opts { gap: 4px; }
+  .p-opt { padding: 8px 6px; }
+  .p-icon { font-size: 16px; }
+  .p-name { font-size: 9px; }
+  .p-desc { font-size: 9px; }
+
+  /* Executor screen */
+  .ex-hdr { padding: 12px 14px; }
+  .ex-hdr-inner { flex-direction: column; gap: 10px; }
+  .ex-status { text-align: left; }
+  .ex-content { padding: 12px 14px 40px; }
+  .ex-fields { grid-template-columns: 1fr; }
+  .ex-instructions-title { font-size: .9rem; }
+  .ex-step-text { font-size: .8rem; }
+
+  /* Digit inputs — bigger for thumb use */
+  .digit { width: 40px; height: 48px; font-size: 1.3rem; }
+  .digit-row { gap: 6px; }
+
+  /* Buttons — full width is fine on mobile */
+  .macts { flex-direction: column-reverse; gap: 6px; }
+  .mbtn { width: 100%; text-align: center; padding: 11px; }
+
+  /* Screen padding */
+  .screen { padding: 16px 12px; }
+  #vaultScreen.active, #executorScreen.active { padding: 0; }
+
+  /* Executor legal notice — smaller */
+  .ex-legal { font-size: .78rem; padding: 12px; }
+  .ex-legal-badge { font-size: .7rem; }
+
+  /* vcontent */
+  .vcontent { padding: 10px 12px 24px; }
+  .cats { gap: 4px; }
+  .cat-btn { padding: 4px 10px; font-size: .75rem; }
+}
+
+/* ── SMALL PHONE (≤400px) ── */
+@media (max-width:400px) {
+  .vlogo-text { font-size: 16px; }
+  .hdrbtn { padding: 5px 7px; font-size: 10px; height: 28px; }
+  .skin-btn { padding: 2px 5px; font-size: 8px; }
+  .tier-grid { grid-template-columns: 1fr; }  /* Single column on tiny screens */
+  .digit { width: 36px; height: 44px; font-size: 1.2rem; }
+  .digit-row { gap: 4px; }
+  .brand-name { font-size: 1.8rem; }
+}
+
+/* ── TOUCH DEVICE IMPROVEMENTS ── */
+@media (hover:none) and (pointer:coarse) {
+  /* Larger tap targets throughout */
+  .ibtn { width: 36px; height: 36px; }
+  .cat-btn { padding: 7px 14px; min-height: 36px; }
+  .hdrbtn { min-height: 36px; }
+  .mbtn { min-height: 44px; }
+  .btn { padding: 15px; }
+  .link-btn { padding: 10px; }
+  .finput, .fselect { padding: 13px 14px; font-size: 16px; } /* 16px prevents iOS zoom */
+  .ftextarea { font-size: 16px; } /* Same */
+
+  /* Remove hover states that don't work on touch */
+  .ecard:hover { border-color: var(--border); }
+
+  /* Scrollable vault content fills screen */
+  #vaultScreen.active { min-height: 100dvh; }
+}
+
+/* ── LANDSCAPE PHONE ── */
+@media (max-width:900px) and (orientation:landscape) and (max-height:500px) {
+  .vhdr { min-height: 44px; padding: 4px 14px; }
+  .vlogo-text { font-size: 15px; }
+  .screen { padding: 8px 12px; }
+  .card { padding: 16px; }
+  .brand-lockup { margin-bottom: 12px; }
+}
+</style>
+<script>
+// Show something immediately — don't wait for IDB
+// _vkInit will call show() again with the correct screen once IDB responds
+document.addEventListener('DOMContentLoaded',function(){
+  // If _vkInit hasn't shown a screen within 1.2s, force tierScreen visible
+  setTimeout(function(){
+    var anyActive=document.querySelector('.screen.active');
+    if(!anyActive){
+      var tier=document.getElementById('tierScreen');
+      if(tier){tier.classList.add('active');console.warn('VaultKey: IDB slow, forced tierScreen');}
+    }
+  },1200);
+});
+</script>
+</head>
+<body>
+
+<!-- ── THEME BACKGROUND GRAPHIC (changes with skin) ── -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN 1 — TIER SELECTION
+═══════════════════════════════════════════════════════════════ -->
+<div class="screen" id="tierScreen">
+<div class="card wide">
+  <div class="brand-lockup">
+    <div class="brand-shield">🔐</div>
+    <div class="brand-name">VaultKey</div>
+    <div class="brand-tagline">Digital Estate Security · AES-256 · Works Offline</div>
+  </div>
+
+  <div style="font-size:13px;color:var(--muted2);text-align:center;margin-bottom:16px;line-height:1.6;">
+    Choose the plan that fits your needs. Your vault is encrypted locally — nothing leaves your device.
+  </div>
+
+  <div class="tier-grid">
+    <div class="tier-card" data-tier="basic" onclick="selectTier('basic')">
+      <div class="tier-name" style="--tier-color:var(--muted)">Basic</div>
+      <div class="tier-price">Free</div>
+      <div class="tier-feat">
+        <div>Password vault (up to 25 entries)</div>
+        <div>AES-256 encryption</div>
+        <div>Encrypted export</div>
+      </div>
+    </div>
+    <div class="tier-card selected" data-tier="pro" onclick="selectTier('pro')">
+      <div class="tier-badge">Popular</div>
+      <div class="tier-name" style="--tier-color:var(--accent)">Pro</div>
+      <div class="tier-price">$3.99 / month</div>
+      <div class="tier-feat">
+        <div>Unlimited entries</div>
+        <div>Executor access + time-lock</div>
+        <div>Privacy levels (Estate / Private)</div>
+        <div>2FA authenticator</div>
+      </div>
+    </div>
+    <div class="tier-card" data-tier="elite" onclick="selectTier('elite')">
+      <div class="tier-name" style="--tier-color:var(--gold)">Elite</div>
+      <div class="tier-price">$7.99 / month</div>
+      <div class="tier-feat">
+        <div>Everything in Pro</div>
+        <div>Sealed entries (auto-delete)</div>
+        <div>Executor export file</div>
+        <div>Multiple executors</div>
+      </div>
+    </div>
+    <div class="tier-card" data-tier="legal" onclick="selectTier('legal')">
+      <div class="tier-name" style="--tier-color:#9b7fe8">Legal Pro</div>
+      <div class="tier-price">$19.99 / month</div>
+      <div class="tier-feat">
+        <div>Everything in Elite</div>
+        <div>RUFADAA-compliant audit log</div>
+        <div>Attorney / professional seat</div>
+        <div>Court-ready access record</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="startSetup()">Continue with Pro</button>
+  <button class="link-btn" onclick="startSetup(true)">Start free with Basic</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN 2 — SETUP WIZARD
+═══════════════════════════════════════════════════════════════ -->
+<div class="screen" id="setupScreen">
+<div class="card">
+  <div class="brand-lockup">
+    <div class="brand-shield">🔐</div>
+    <div class="brand-name">VaultKey</div>
+    <div class="brand-tagline" id="setupSub">Setting up your vault</div>
+  </div>
+  <div class="dots">
+    <div class="dot active" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+    <div class="dot" id="d4"></div>
+  </div>
+
+  <!-- Step 0: Master password -->
+  <div id="s0">
+    <div class="infobox">Your master password is the only key to your vault. We never store it. Choose something strong — but you'll set up recovery options on the next steps.</div>
+    <label class="flabel">Master Password</label>
+    <input class="finput" type="password" id="spw" placeholder="Choose a strong password" oninput="updStr2()">
+    <div class="sbar"><div class="sfill" id="sfill2"></div></div>
+    <div class="slbl" id="slbl2"></div>
+    <label class="flabel">Confirm Password</label>
+    <input class="finput" type="password" id="spw2" placeholder="Confirm password">
+    <label class="flabel">Password Hint (stored unencrypted — keep it cryptic)</label>
+    <input class="finput" type="text" id="shint" placeholder="Something only you would understand">
+    <button class="btn" onclick="s0next()">Continue →</button>
+    <div class="errmsg" id="s0err"></div>
+  </div>
+
+  <!-- Step 1: Recovery key -->
+  <div id="s1" style="display:none">
+    <div class="infobox">Your recovery key is a last-resort backup if you forget your master password. Store it physically — printed in a safe, or a sealed envelope with your will.</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--btn-radius);padding:12px;text-align:center;margin:12px 0;">
+      <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Your Recovery Key</div>
+      <div id="rKeyDisplay" style="font-family:var(--mono-font);font-size:15px;color:var(--gold2);letter-spacing:.12em;word-break:break-all;"></div>
+    </div>
+    <button class="btn secondary" onclick="copyRkey()">Copy Recovery Key</button>
+    <div class="infobox warn" style="margin-top:12px;">⚠ Write this down before continuing. You cannot retrieve it again.</div>
+    <button class="btn" onclick="s1next()" style="margin-top:8px;">I've saved my key →</button>
+    <button class="link-btn" onclick="s1skip()">Skip (not recommended)</button>
+  </div>
+
+  <!-- Step 2: Security questions -->
+  <div id="s2" style="display:none">
+    <div class="infobox">Three security questions used for identity verification during recovery and executor access. Reshuffle if you prefer different ones.</div>
+    <div id="sqContainer"></div>
+    <button class="btn secondary" onclick="renderSQ()">⟳ Reshuffle Questions</button>
+    <button class="btn" onclick="saveSQ()">Save Answers →</button>
+    <button class="link-btn" onclick="skipSQ()">Skip</button>
+    <div class="errmsg" id="sqErr"></div>
+  </div>
+
+  <!-- Step 3: Executor setup -->
+  <div id="s3" style="display:none">
+    <div class="infobox legal">⚖️ Executor access allows a trusted person to view estate-level accounts if you are incapacitated or deceased. Every access is logged and the account owner is alerted immediately. Any use without authorisation is a criminal offence.</div>
+    <div class="exec-setup">
+      <div class="exec-setup-title">Primary Executor</div>
+      <div class="exec-setup-sub">Person authorised to access your estate accounts</div>
+      <label class="flabel">Full Name</label>
+      <input class="finput" type="text" id="exName" placeholder="e.g. Margaret Birch">
+      <label class="flabel">Relationship</label>
+      <input class="finput" type="text" id="exRel" placeholder="e.g. Spouse, Solicitor, Estate Attorney">
+      <label class="flabel">Email Address</label>
+      <input class="finput" type="email" id="exEmail" placeholder="executor@email.com">
+      <label class="flabel">Executor Access Code (you choose — share privately)</label>
+      <input class="finput" type="text" id="exCode" placeholder="Min. 8 characters">
+      <label class="flabel">Time-lock delay before access is granted</label>
+      <select class="fselect" id="exWait" onchange="selectWait(this.value)">
+        <option value="24">24 hours (standard)</option>
+        <option value="48">48 hours</option>
+        <option value="72">72 hours</option>
+        <option value="168">7 days</option>
+      </select>
+      <div class="infobox" style="margin-top:8px;font-size:12px;">During the time-lock window you will receive email alerts and can cancel the access request by logging in normally.</div>
+    </div>
+    <button class="btn" onclick="saveExecutor()">Save Executor →</button>
+    <button class="link-btn" onclick="skipExecutor()">Skip — set up later</button>
+    <div class="errmsg" id="exErr2"></div>
+  </div>
+
+  <!-- Step 4: 2FA -->
+  <div id="s4" style="display:none">
+    <div class="infobox">Optional: add a second factor so that even if someone learns your master password, they cannot unlock your vault without your authenticator app.</div>
+    <div style="text-align:center;padding:16px 0;">
+      <canvas id="qrCanvas" style="display:none;margin:0 auto;image-rendering:pixelated;"></canvas>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;">Or enter this secret in your authenticator app:</div>
+      <div id="secretDisplay" style="font-family:var(--mono-font);font-size:13px;color:var(--gold);letter-spacing:.1em;margin-top:6px;word-break:break-all;"></div>
+      <button class="btn secondary" onclick="copySecret()" style="margin-top:8px;">Copy Secret</button>
+    </div>
+    <div class="infobox warn">Open your authenticator app, scan the QR code or enter the secret, then enter the 6-digit code below to verify.</div>
+    <label class="flabel">Verify 6-digit code</label>
+    <div class="digit-row" id="tfaDigits" onpaste="digPaste(event,'tfaDigits')">
+      <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,0,'tfaDigits')" onclick="this.select()">
+      <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,1,'tfaDigits')" onclick="this.select()">
+      <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,2,'tfaDigits')" onclick="this.select()">
+      <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,3,'tfaDigits')" onclick="this.select()">
+      <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,4,'tfaDigits')" onclick="this.select()">
+      <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,5,'tfaDigits')" onclick="this.select()">
+    </div>
+    <button class="btn" onclick="verify2FA()">Verify &amp; Enable 2FA →</button>
+    <button class="link-btn" onclick="skip2FA()">Skip — set up later</button>
+    <div class="errmsg" id="tfaErr"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN 3 — LOCK SCREEN
+═══════════════════════════════════════════════════════════════ -->
+<div class="screen" id="lockScreen">
+<div class="card">
+  <div class="brand-lockup">
+    <div class="brand-shield">🔐</div>
+    <div class="brand-name" id="lockTitle">VaultKey</div>
+    <div class="brand-tagline">Enter your credentials to continue</div>
+  </div>
+
+  <div class="ltabs">
+    <button class="ltab active" id="ltPw" onclick="ltab('pw')">Password</button>
+    <button class="ltab" id="ltRec" onclick="ltab('rec')">Recovery</button>
+    <button class="ltab" id="ltEx" onclick="ltab('ex')">Executor</button>
+    <button class="ltab" id="ltFile" onclick="ltab('file')">Open File</button>
+  </div>
+
+  <!-- Password panel -->
+  <div id="lPwPanel">
+    <label class="flabel">Master Password</label>
+    <input class="finput" type="password" id="mpInput" placeholder="Master password" onkeydown="if(event.key==='Enter')tryUnlock()">
+    <div id="tfa-unlock" style="display:none;">
+      <label class="flabel">Authenticator Code</label>
+      <div class="digit-row" id="unlockDigits" onpaste="digPaste(event,'unlockDigits')">
+        <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,0,'unlockDigits')" onclick="this.select()">
+        <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,1,'unlockDigits')" onclick="this.select()">
+        <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,2,'unlockDigits')" onclick="this.select()">
+        <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,3,'unlockDigits')" onclick="this.select()">
+        <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,4,'unlockDigits')" onclick="this.select()">
+        <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,5,'unlockDigits')" onclick="this.select()">
+      </div>
+    </div>
+    <div class="errmsg" id="mpErr"></div>
+    <button class="btn" onclick="tryUnlock()">Unlock Vault</button>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+      <button class="link-btn" onclick="showHint()" style="flex:1">Show hint</button>
+      <button class="link-btn muted" onclick="confirmReset()" style="flex:1">Reset vault</button>
+    </div>
+    <div id="hintBox" style="display:none;" class="infobox" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- Recovery panel -->
+  <div id="lRecPanel" style="display:none">
+    <div class="ltabs" style="margin-bottom:12px;">
+      <button class="ltab active" id="lrKey" onclick="rtab('Key')">Recovery Key</button>
+      <button class="ltab" id="lrEmail" onclick="rtab('Email')">Email</button>
+      <button class="ltab" id="lrSms" onclick="rtab('Sms')">SMS</button>
+    </div>
+    <div id="rKeyPanel">
+      <label class="flabel">Recovery Key</label>
+      <input class="finput" type="text" id="rKeyIn" placeholder="XXXX-XXXX-XXXX-XXXX">
+      <label class="flabel">New Master Password</label>
+      <input class="finput" type="password" id="rKeyNewPw" placeholder="New password (min 8 characters)">
+      <button class="btn" onclick="doKeyRecovery()">Reset &amp; Unlock</button>
+      <div class="errmsg" id="rKeyErr"></div>
+    </div>
+    <div id="rEmailPanel" style="display:none">
+      <input class="finput" type="email" id="rEmailIn" placeholder="Registered email address">
+      <button class="btn" id="sendEmailBtn" onclick="sendEmailCode()">Send Recovery Code</button>
+      <div id="emailCodePanel" style="display:none;margin-top:12px">
+        <div class="digit-row" id="emailDigits" onpaste="digPaste(event,'emailDigits')">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,0,'emailDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,1,'emailDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,2,'emailDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,3,'emailDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,4,'emailDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,5,'emailDigits')" onclick="this.select()">
+        </div>
+        <input class="finput" type="password" id="emailNewPw" placeholder="New password">
+        <button class="btn positive" onclick="doEmailRecovery()">Verify &amp; Reset</button>
+      </div>
+      <div class="errmsg" id="emailErr"></div>
+    </div>
+    <div id="rSmsPanel" style="display:none">
+      <input class="finput" type="tel" id="rSmsIn" placeholder="Registered phone number">
+      <button class="btn" id="sendSmsBtn" onclick="sendSmsCode()">Send SMS Code</button>
+      <div id="smsCodePanel" style="display:none;margin-top:12px">
+        <div class="digit-row" id="smsDigits" onpaste="digPaste(event,'smsDigits')">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,0,'smsDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,1,'smsDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,2,'smsDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,3,'smsDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,4,'smsDigits')" onclick="this.select()">
+          <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,5,'smsDigits')" onclick="this.select()">
+        </div>
+        <input class="finput" type="password" id="smsNewPw" placeholder="New password">
+        <button class="btn positive" onclick="doSmsRecovery()">Verify &amp; Reset</button>
+      </div>
+      <div class="errmsg" id="smsErr"></div>
+    </div>
+  </div>
+
+  <!-- Executor panel -->
+  <div id="lExPanel" style="display:none">
+    <div class="infobox legal">
+      ⚖️ Executor access is for authorised persons only. Every login is logged, timestamped, and the account owner is alerted immediately.<br><br>
+      <strong style="color:var(--negative);">Unauthorised access is a criminal offence under the Computer Misuse Act 1990 and equivalent legislation.</strong>
+    </div>
+    <label class="flabel">Your Full Name</label>
+    <input class="finput" type="text" id="exLoginName" placeholder="Your full legal name">
+    <label class="flabel">Executor Access Code</label>
+    <input class="finput" type="password" id="exLoginCode" placeholder="Code provided by account holder or solicitor">
+    <div class="errmsg" id="exErr"></div>
+    <button class="btn gold" onclick="tryExecutorUnlock()">Request Executor Access</button>
+    <div class="infobox warn" style="margin-top:10px;font-size:12px;">A time-lock delay applies. The account owner will be notified by email and can cancel access within the configured window by logging into their vault.</div>
+    <div id="countdownBanner" style="display:none;background:rgba(232,168,48,.06);border:1px solid rgba(232,168,48,.3);border-radius:var(--btn-radius);padding:14px 16px;margin-top:10px;">
+      <div style="font-size:12px;font-weight:700;color:var(--warning);margin-bottom:4px;">&#9201; Time-Lock Active</div>
+      <div style="font-size:12px;color:var(--muted2);">Access granted in: <strong id="countdownDisplay" style="color:var(--gold2);font-family:var(--mono-font);">--:--:--</strong></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">The account owner has been alerted and may cancel this request by logging in normally.</div>
+    </div>
+  </div>
+
+  <!-- Open executor file panel -->
+  <div id="lFilePanel" style="display:none">
+    <div class="infobox legal">📄 If you have received a VaultKey Executor Document file (.json), open it here using the access code given to you by the account holder or their solicitor.</div>
+    <label class="flabel">Select Executor Document File</label>
+    <input type="file" id="exFileInput" accept=".json" style="display:none" onchange="handleExFileSelect(this)">
+    <button class="btn secondary" style="margin-top:8px;" onclick="document.getElementById('exFileInput').click()">📂 Choose File…</button>
+    <div id="exFileNameDisplay" style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center;"></div>
+    <div id="exFileCodeWrap" style="display:none;margin-top:4px;">
+      <label class="flabel">Executor Access Code</label>
+      <input class="finput" type="password" id="exFileCode" placeholder="Access code from account holder" onkeydown="if(event.key==='Enter')openExFile()">
+      <label class="flabel">Your Full Name</label>
+      <input class="finput" type="text" id="exFileName2" placeholder="Your full legal name">
+      <div class="errmsg" id="exFileErr"></div>
+      <button class="btn gold" onclick="openExFile()" style="margin-top:12px;">Open Executor Document</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN 4 — VAULT (OWNER VIEW)
+═══════════════════════════════════════════════════════════════ -->
+<div class="screen" id="vaultScreen">
+  <div class="vhdr">
+    <div class="vlogo">
+      <div class="vlogo-shield">🔐</div>
+      <div>
+        <div class="vlogo-text">VaultKey</div>
+        <div class="vlogo-sub" id="vaultSub">Personal</div>
+      </div>
+    </div>
+    <input class="vsearch" type="text" id="vsearch" placeholder="Search entries…" oninput="renderEntries()">
+    <div style="display:flex;gap:6px;margin-left:auto;flex-wrap:nowrap;align-items:center;flex-shrink:0;">
+      <div class="skin-switcher" id="skinSwitcher">
+        <button class="skin-btn active" onclick="setSkin('personal')">Personal</button>
+        <button class="skin-btn" onclick="setSkin('legal')">Legal</button>
+        <button class="skin-btn" onclick="setSkin('military')">Military</button>
+      </div>
+      <button class="hdrbtn accent" onclick="openAdd()">+ Add</button>
+      <button class="hdrbtn gold" onclick="openExportExecutor()">Executor Export</button>
+      <button class="hdrbtn" onclick="openSettings()">Settings</button>
+      <button class="hdrbtn" onclick="exportVault()">Backup</button>
+      <button class="hdrbtn" onclick="openSupport()" title="Customer Support">💬 Support</button>
+      <button class="hdrbtn" onclick="openFeedback()" title="Send Feedback">✉ Feedback</button>
+      <button class="hdrbtn" id="pwaInstallBtn" onclick="triggerPWAInstall()" title="Install VaultKey on this device" style="display:none;border-color:var(--positive);color:var(--positive);">&#8659; Install App</button>
+      <button class="hdrbtn" onclick="lockVault()">Lock</button>
+      <div class="a11y-bar">
+        <span class="ab-a-sm">A</span>
+        <input type="range" id="fs-slider" min="13" max="32" step="1" value="15"
+          oninput="setFSSlider(this.value)"
+          style="width:64px;cursor:pointer;accent-color:var(--accent);">
+        <span class="ab-a-lg">A</span>
+        <button class="ab-btn" id="lm-btn" onclick="toggleLight()" title="Light / Dark">☀️</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:860px;width:100%;margin:16px auto 0;padding:0 20px;">
+    <div class="alarm-banner" id="vaultAlarmBanner">
+      <div class="alarm-title">⚠️ Executor Access Detected</div>
+      <div class="alarm-detail" id="vaultAlarmDetail"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn secondary" style="width:auto;padding:6px 14px;" onclick="openAccessLog()">View Access Log</button>
+        <button class="btn danger" style="width:auto;padding:6px 14px;" onclick="cancelExecutorAccess()">Cancel Executor Access</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vcontent">
+    <div class="stats-row" id="statsRow"></div>
+    <div class="cats" id="catsRow"></div>
+    <div class="elist" id="eList"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SCREEN 5 — EXECUTOR VIEW (the key deliverable)
+═══════════════════════════════════════════════════════════════ -->
+<div class="screen" id="executorScreen">
+  <div class="ex-hdr">
+    <div class="ex-hdr-inner">
+      <div class="ex-brand">
+        <div class="ex-brand-name">VaultKey</div>
+        <div class="ex-brand-tag">Digital Estate Document · Confidential</div>
+        <div class="ex-title" id="exViewTitle">Estate Access Record</div>
+        <div class="ex-meta" id="exViewMeta"></div>
+      </div>
+      <div class="ex-status">
+        <div class="ex-status-label">Authorisation Status</div>
+        <div class="ex-status-val" id="exAuthStatus">✓ Access Granted</div>
+        <div class="ex-audit" id="exAuditLine"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-content">
+    <!-- Legal notice -->
+    <div class="ex-legal" id="exLegalNotice">
+      <div class="ex-legal-badge">⚖ RUFADAA Compliant</div><br>
+      This document has been prepared in accordance with the Revised Uniform Fiduciary Access to Digital Assets Act (RUFADAA). Access to entries marked <strong>Estate</strong> has been explicitly authorised by the account holder. Entries marked <strong>Private</strong> are visible by name only — the account holder's privacy instruction is legally honoured. This access has been logged, timestamped, and is admissible as an audit record.
+    </div>
+
+    <!-- Audit notice -->
+    <div class="ex-audit-notice">
+      ⏱ This access session is being logged. Access timestamp, your name, device information, and all entries viewed are recorded. This log cannot be altered or deleted by you.
+    </div>
+
+    <!-- Instructions -->
+    <div class="ex-instructions" id="exInstructions">
+      <div class="ex-instructions-title">How to use this document</div>
+      <div class="ex-step">
+        <div class="ex-step-num">1</div>
+        <div class="ex-step-text">Use the <strong>Estate</strong> entries below to locate and access financial accounts, services, and digital assets included in the estate.</div>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">2</div>
+        <div class="ex-step-text">Entries marked <strong>Private</strong> are listed by name only. You cannot access their contents — this was the account holder's explicit instruction. Do not attempt to bypass this.</div>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">3</div>
+        <div class="ex-step-text">Click <strong>Show</strong> to reveal any password. Click <strong>Copy</strong> to copy a username or password to your clipboard. All actions are logged.</div>
+      </div>
+      <div class="ex-step">
+        <div class="ex-step-num">4</div>
+        <div class="ex-step-text">If you require a printed copy, use your browser's print function. This document is suitable for presentation to financial institutions alongside a grant of probate.</div>
+      </div>
+    </div>
+
+    <!-- Estate entries injected here -->
+    <div id="exEntriesContainer"></div>
+
+    <!-- Print / close -->
+    <div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;">
+      <button class="btn" onclick="window.print()" style="flex:1;">Print This Document</button>
+      <button class="btn secondary" onclick="closeExecutorView()" style="flex:1;">Close Executor View</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ADD / EDIT MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="addOverlay">
+<div class="modal">
+  <div class="mtitle" id="addTitle">Add Entry</div>
+  <button class="mclose" onclick="closeAdd()">✕</button>
+  <label class="flabel">Site / Service Name</label>
+  <input class="finput" type="text" id="fn" placeholder="e.g. Chase Bank, Gmail, Schwab" autocomplete="off">
+  <label class="flabel">Category</label>
+  <select class="fselect" id="fc">
+    <option>🏦 Finance</option><option>📧 Email</option><option>🛒 Shopping</option>
+    <option>🏥 Health</option><option>🎮 Entertainment</option><option>🏠 Home</option>
+    <option>💼 Work</option><option>🔧 Utilities</option><option>📱 Social</option>
+    <option>₿ Crypto</option><option>☁️ Other</option>
+  </select>
+  <label class="flabel">Username / Email</label>
+  <input class="finput" type="text" id="fu" placeholder="your@email.com" autocomplete="off">
+  <label class="flabel">Password</label>
+  <div class="pw-row">
+    <input class="finput" type="text" id="fp" placeholder="Password" autocomplete="off" oninput="updStr()" style="margin-bottom:0">
+    <button class="pwbtn" onclick="genPw()">⟳ Generate</button>
+  </div>
+  <div class="pw-actions">
+    <button class="pwbtn" id="keepOrigBtn" onclick="keepOrig()" style="display:none">↩ Restore</button>
+    <span class="pw-orig-label" id="pwOrigLabel"></span>
+  </div>
+  <div class="sbar"><div class="sfill" id="sfill"></div></div>
+  <div class="slbl" id="slbl"></div>
+  <label class="flabel">URL (optional)</label>
+  <input class="finput" type="url" id="furl" placeholder="https://" autocomplete="off">
+  <label class="flabel">Notes (optional — security questions, PINs, account numbers)</label>
+  <textarea class="ftextarea" id="fnotes" placeholder="Additional account details…"></textarea>
+
+  <div class="privacy-selector">
+    <div class="privacy-label-top">Executor / Estate Visibility</div>
+    <div class="privacy-opts">
+      <div class="p-opt pe" id="po-e" onclick="setPrv('estate')">
+        <div class="p-icon">🏛️</div>
+        <div class="p-name">Estate</div>
+        <div class="p-desc">Executor can view full details</div>
+      </div>
+      <div class="p-opt" id="po-p" onclick="setPrv('private')">
+        <div class="p-icon">🔒</div>
+        <div class="p-name">Private</div>
+        <div class="p-desc">Executor sees name only</div>
+      </div>
+      <div class="p-opt" id="po-s" onclick="setPrv('sealed')">
+        <div class="p-icon">🔥</div>
+        <div class="p-name">Sealed</div>
+        <div class="p-desc">Auto-deleted on executor login</div>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="fprv" value="estate">
+
+  <div id="deleteSection" style="display:none">
+    <div class="divider"></div>
+    <button class="btn danger" onclick="toggleDelConfirm()" style="font-size:13px;padding:11px;">Delete this Entry</button>
+    <div class="del-confirm" id="delConfirm">
+      <p style="font-size:13px;margin-bottom:8px;">Type <strong>DELETE</strong> to permanently remove this entry.</p>
+      <input class="finput" type="text" id="delConfirmInput" placeholder="Type DELETE to confirm" oninput="checkDel(this)">
+      <div class="del-hint">This cannot be undone.</div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="mbtn cancel" onclick="toggleDelConfirm()">Cancel</button>
+        <button class="mbtn danger" id="delBtn" disabled onclick="confirmDelete()">Delete Forever</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="macts">
+    <button class="mbtn cancel" onclick="closeAdd()">Cancel</button>
+    <button class="mbtn save" onclick="saveEntry()">Save Entry</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DETAIL MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="detailOverlay">
+<div class="modal">
+  <div class="mtitle" id="detTitle"></div>
+  <button class="mclose" onclick="closeDet()">✕</button>
+  <div id="detBody"></div>
+  <div class="macts">
+    <button class="mbtn cancel" onclick="editFromDet()">✎ Edit</button>
+    <button class="mbtn danger" onclick="delFromDet()">Delete</button>
+    <button class="mbtn save" onclick="closeDet()">Done</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     EXPORT FOR EXECUTOR MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="exportExOverlay">
+<div class="modal">
+  <div class="mtitle">Export Estate Document for Executor</div>
+  <button class="mclose" onclick="document.getElementById('exportExOverlay').classList.remove('open')">✕</button>
+  <div class="infobox">This creates a standalone encrypted file your executor can open independently — separate from your main vault. Choose a separate access code to give to your executor.</div>
+  <label class="flabel">Executor Access Code (for this file)</label>
+  <input class="finput" type="text" id="exExportCode" placeholder="Min. 8 characters — share with your executor">
+  <label class="flabel">Confirm Code</label>
+  <input class="finput" type="text" id="exExportCode2" placeholder="Confirm">
+  <label class="flabel">Executor Name (for the document header)</label>
+  <input class="finput" type="text" id="exExportName" placeholder="e.g. Margaret Birch">
+  <div id="exExportCode3Wrap" style="display:none">
+    <div class="infobox warn" style="margin-top:12px;">
+      Your export code is shown once. Give this to your executor to open the file.<br>
+      <div class="ex-export-code" id="exExportCodeDisplay"></div>
+    </div>
+  </div>
+  <div class="errmsg" id="exExportErr"></div>
+  <div class="macts">
+    <button class="mbtn cancel" onclick="document.getElementById('exportExOverlay').classList.remove('open')">Cancel</button>
+    <button class="mbtn save" onclick="doExportExecutor()">Generate Executor File</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACCESS LOG MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="logOverlay">
+<div class="modal">
+  <div class="mtitle">Executor Access Log</div>
+  <button class="mclose" onclick="document.getElementById('logOverlay').classList.remove('open')">✕</button>
+  <div class="infobox danger">Every entry represents an executor access attempt. Each triggered an immediate owner alert. This log is append-only while executor mode is active.</div>
+  <div id="logBody"></div>
+  <div class="macts">
+    <button class="mbtn cancel" onclick="document.getElementById('logOverlay').classList.remove('open')">Close</button>
+    <button class="mbtn danger" onclick="clearLog()">Clear Log</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SETTINGS MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="settingsOverlay">
+<div class="modal">
+  <div class="mtitle">Settings</div>
+  <button class="mclose" onclick="closeSettings()">✕</button>
+  <div class="settings-section">
+    <div class="sshead">Security</div>
+    <div class="toggle-row">
+      <div><div class="tname">Two-Factor Authentication</div><div class="tdesc">Require authenticator code on every unlock</div></div>
+      <label class="toggle"><input type="checkbox" id="tog2fa" onchange="toggle2FA(this)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="toggle-row">
+      <div><div class="tname">Auto-Lock (15 min)</div><div class="tdesc">Lock vault after inactivity</div></div>
+      <label class="toggle"><input type="checkbox" id="togAutoLock" onchange="saveSettings()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+    <div class="toggle-row">
+      <div><div class="tname">Clipboard Auto-Clear</div><div class="tdesc">Erase copied passwords after 30 seconds</div></div>
+      <label class="toggle"><input type="checkbox" id="togClip" onchange="saveSettings()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="sshead">Recovery Contacts</div>
+    <label class="flabel">Recovery Email</label>
+    <input class="finput" type="email" id="setEmail" placeholder="your@email.com">
+    <label class="flabel">Recovery Phone</label>
+    <input class="finput" type="tel" id="setPhone" placeholder="+1 555 000 0000">
+    <button class="btn secondary" onclick="saveRecoveryContacts()">Save Contacts</button>
+  </div>
+  <div class="settings-section" id="executorSettings" style="display:none">
+    <div class="sshead">Executor Configuration</div>
+    <div id="executorDisplay" style="font-size:13px;color:var(--muted2);margin-bottom:10px;"></div>
+    <button class="btn secondary" onclick="openAccessLog()">View Access Log</button>
+  </div>
+  <div class="settings-section">
+    <div class="sshead">Skin / Visual Theme</div>
+    <div style="display:flex;gap:6px;margin-top:4px;">
+      <button class="btn secondary" style="flex:1;margin:0;padding:8px;font-size:11px;" onclick="setSkin('personal')">Personal</button>
+      <button class="btn secondary" style="flex:1;margin:0;padding:8px;font-size:11px;" onclick="setSkin('legal')">Legal</button>
+      <button class="btn secondary" style="flex:1;margin:0;padding:8px;font-size:11px;" onclick="setSkin('military')">Military</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="sshead">Change Master Password</div>
+    <label class="flabel">Current Password</label>
+    <input class="finput" type="password" id="setCurPw" placeholder="Current password">
+    <label class="flabel">New Password</label>
+    <input class="finput" type="password" id="setNewPw" placeholder="New password">
+    <div class="errmsg" id="setPwErr"></div>
+    <button class="btn secondary" onclick="changeMasterPw()">Change Password</button>
+  </div>
+  <div class="settings-section">
+    <div class="sshead">Data</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:8px;">Plan: <span id="planDisplay" style="color:var(--accent);"></span></div>
+    <button class="btn secondary" onclick="exportVault();closeSettings()">Download Encrypted Backup</button>
+    <button class="btn secondary" style="margin-top:6px;" onclick="closeSettings();openFeedbackReport()">📊 View Feedback Report</button>
+    <button class="btn danger" style="margin-top:6px;" onclick="confirmWipe()">Wipe All Vault Data</button>
+  </div>
+  <div class="infobox" style="margin-top:12px;font-size:12px;">🔒 AES-256-GCM encryption · Everything runs offline · Nothing is transmitted to any server</div>
+  <div class="macts" style="position:sticky;bottom:0;background:var(--bg2);padding:12px 0 0;margin-top:16px;border-top:1px solid var(--border);">
+    <button class="mbtn cancel" onclick="closeSettings()">Close</button>
+    <button class="mbtn save" onclick="saveAllSettings()">Save &amp; Close</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SUPPORT MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="supportOverlay">
+<div class="modal" style="max-width:460px;">
+  <div class="mtitle">💬 Customer Support</div>
+  <button class="mclose" onclick="document.getElementById('supportOverlay').classList.remove('open')">✕</button>
+  <div class="infobox legal" style="text-align:center;padding:20px 16px;">
+    <div style="font-size:2rem;margin-bottom:10px;">🛡️</div>
+    <div style="font-size:1.05rem;font-weight:700;color:var(--accent2);margin-bottom:6px;">VaultKey Support</div>
+    <div style="font-size:.82rem;color:var(--muted2);margin-bottom:16px;line-height:1.6;">Our team is available Monday – Friday, 8am – 6pm PT.<br>For urgent executor access issues, use the priority line.</div>
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--btn-radius);padding:14px;margin-bottom:10px;">
+      <div style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">General Support</div>
+      <div style="font-size:1.3rem;font-weight:700;color:var(--accent2);letter-spacing:.04em;">1-800-VAULTKEY</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">1-800-825-8539</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid rgba(232,168,48,.3);border-radius:var(--btn-radius);padding:14px;">
+      <div style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Executor Access Priority Line</div>
+      <div style="font-size:1.3rem;font-weight:700;color:var(--gold2);letter-spacing:.04em;">1-800-VAULT-EX</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">For estate & executor access issues — 24/7</div>
+    </div>
+    <div style="margin-top:12px;font-size:.78rem;color:var(--muted);">Or email <span style="color:var(--accent);">support@vaultkey.com</span></div>
+  </div>
+  <div class="macts">
+    <button class="mbtn save" onclick="document.getElementById('supportOverlay').classList.remove('open')">Close</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FEEDBACK MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="feedbackOverlay">
+<div class="modal" style="max-width:500px;">
+  <div class="mtitle">✉ Send Feedback</div>
+  <button class="mclose" onclick="closeFeedback()">✕</button>
+  <div class="infobox" style="font-size:.82rem;">Your feedback shapes VaultKey. Tell us what's working, what's broken, or what you wish it could do. We read every submission.</div>
+  <label class="flabel">Category</label>
+  <select class="fselect" id="fbCategory">
+    <option value="bug">🐛 Bug Report — something isn't working</option>
+    <option value="improvement">⚡ Feature Improvement — make existing features better</option>
+    <option value="addition">✨ Feature Request — add something new</option>
+    <option value="ux">🎨 Design / UX — look, feel, or usability</option>
+    <option value="security">🔒 Security Concern — potential vulnerability</option>
+    <option value="general">💬 General Comment</option>
+  </select>
+  <label class="flabel">Your Feedback</label>
+  <textarea class="ftextarea" id="fbText" maxlength="1000" placeholder="Describe the issue, idea, or comment in as much detail as you like…" oninput="fbCount()" style="min-height:120px;"></textarea>
+  <div style="text-align:right;font-size:.75rem;margin-top:3px;">
+    <span id="fbCountDisplay" style="color:var(--muted);">1000 characters remaining</span>
+  </div>
+  <label class="flabel" style="margin-top:8px;">Your Email (optional — for follow-up)</label>
+  <input class="finput" type="email" id="fbEmail" placeholder="your@email.com">
+  <div class="errmsg" id="fbErr"></div>
+  <div class="macts">
+    <button class="mbtn cancel" onclick="closeFeedback()">Cancel</button>
+    <button class="mbtn save" onclick="submitFeedback()">Submit Feedback</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FEEDBACK REPORT MODAL (owner/admin view)
+═══════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="feedbackReportOverlay">
+<div class="modal" style="max-width:680px;">
+  <div class="mtitle">📊 Feedback Report</div>
+  <button class="mclose" onclick="document.getElementById('feedbackReportOverlay').classList.remove('open')">✕</button>
+  <div id="feedbackReportBody"></div>
+  <div class="macts">
+    <button class="mbtn cancel" onclick="exportFeedbackCSV()">Export CSV</button>
+    <button class="mbtn danger" onclick="clearFeedback()">Clear All</button>
+    <button class="mbtn save" onclick="document.getElementById('feedbackReportOverlay').classList.remove('open')">Close</button>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- QR code rendered locally — TOTP secret never leaves device -->
+<script>
+// Minimal QR encoder — pure JS, no network calls
+// Adapted from qrcodejs (MIT license)
+function _drawQR(canvas,text){
+  // Reed-Solomon QR encoder
+  var L={L:1,M:0,Q:3,H:2};
+  function Model(n,ecl){this.n=n;this.ecl=ecl;this.mod=null;this.mc=0;this.dc=null;this.dl=[];}
+  Model.prototype={addData:function(d){this.dl.push({mode:4,data:d,getLength:function(){return d.length;},write:function(buf){for(var i=0;i<d.length;i++)buf.put(d.charCodeAt(i),8);}});this.dc=null;},isDark:function(r,c){return this.mod[r][c];},getModuleCount:function(){return this.mc;},make:function(){this._mk(false);var ml=0,mp=0;for(var i=0;i<8;i++){this._mk(true);var l=_lp(this);if(!i||ml>l){ml=l;mp=i;}}this._mk(false,mp);},_mk:function(t,mask){this.mc=this.n*4+17;this.mod=[];for(var i=0;i<this.mc;i++){this.mod.push(new Array(this.mc).fill(null));}this._pp(0,0);this._pp(this.mc-7,0);this._pp(0,this.mc-7);this._pa();this._pt();this._ti(t,mask);if(this.n>=7)this._tn(t);if(!this.dc)this.dc=_cd(this.n,this.ecl,this.dl);this._md(this.dc,mask);},_pp:function(r,c){for(var i=-1;i<=7;i++){if(r+i<0||this.mc<=r+i)continue;for(var j=-1;j<=7;j++){if(c+j<0||this.mc<=c+j)continue;this.mod[r+i][c+j]=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4);}}},_pt:function(){for(var i=8;i<this.mc-8;i++){if(this.mod[i][6]==null)this.mod[i][6]=i%2===0;if(this.mod[6][i]==null)this.mod[6][i]=i%2===0;}},_pa:function(){var p=_gpp(this.n);for(var i=0;i<p.length;i++)for(var j=0;j<p.length;j++){var r=p[i],c=p[j];if(this.mod[r][c]!=null)continue;for(var dr=-2;dr<=2;dr++)for(var dc=-2;dc<=2;dc++)this.mod[r+dr][c+dc]=(dr===-2||dr===2||dc===-2||dc===2||!dr&&!dc);}},_tn:function(t){var b=_btn(this.n);for(var i=0;i<18;i++){this.mod[Math.floor(i/3)][i%3+this.mc-11]=!t&&!!(b>>i&1);}for(var i=0;i<18;i++){this.mod[i%3+this.mc-11][Math.floor(i/3)]=!t&&!!(b>>i&1);}},_ti:function(t,mp){var d=this.ecl<<3|(mp||0),b=_bti(d);for(var i=0;i<15;i++){var v=!t&&!!(b>>i&1);i<6?this.mod[i][8]=v:i<8?this.mod[i+1][8]=v:this.mod[this.mc-15+i][8]=v;}for(var i=0;i<15;i++){var v=!t&&!!(b>>i&1);i<8?this.mod[8][this.mc-i-1]=v:i<9?this.mod[8][15-i]=v:this.mod[8][15-i-1]=v;}this.mod[this.mc-8][8]=!t;},_md:function(data,mp){var inc=-1,row=this.mc-1,bi=7,by=0;for(var col=this.mc-1;col>0;col-=2){if(col===6)col--;for(;;){for(var c=0;c<2;c++){if(this.mod[row][col-c]==null){var dark=by<data.length&&!!(data[by]>>bi&1);if(_gm(mp||0,row,col-c))dark=!dark;this.mod[row][col-c]=dark;if(--bi<0){by++;bi=7;}}}row+=inc;if(row<0||this.mc<=row){row-=inc;inc=-inc;break;}}}}};
+  var _E=new Array(256),_L=new Array(256);for(var i=0;i<8;i++)_E[i]=1<<i;for(var i=8;i<256;i++)_E[i]=_E[i-4]^_E[i-5]^_E[i-6]^_E[i-8];for(var i=0;i<255;i++)_L[_E[i]]=i;
+  function _exp(n){while(n<0)n+=255;while(n>=256)n-=255;return _E[n];}function _log(n){if(n<1)throw 0;return _L[n];}
+  function Poly(n,s){var o=0;while(o<n.length&&!n[o])o++;this.n=new Array(n.length-o+s);for(var i=0;i<n.length-o;i++)this.n[i]=n[i+o];}
+  Poly.prototype={get:function(i){return this.n[i];},len:function(){return this.n.length;},mul:function(e){var n=new Array(this.len()+e.len()-1);for(var i=0;i<this.len();i++)for(var j=0;j<e.len();j++)n[i+j]^=_exp(_log(this.get(i))+_log(e.get(j)));return new Poly(n,0);},mod:function(e){if(this.len()-e.len()<0)return this;var r=_log(this.get(0))-_log(e.get(0)),n=Array.from(this.n);for(var i=0;i<e.len();i++)n[i]^=_exp(_log(e.get(i))+r);return new Poly(n,0).mod(e);}};
+  function _ecp(n){var a=new Poly([1],0);for(var i=0;i<n;i++)a=a.mul(new Poly([1,_exp(i)],0));return a;}
+  var _PT=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]];
+  function _gpp(n){return _PT[n-1];}
+  function _gm(mp,i,j){switch(mp){case 0:return(i+j)%2===0;case 1:return i%2===0;case 2:return j%3===0;case 3:return(i+j)%3===0;case 4:return(Math.floor(i/2)+Math.floor(j/3))%2===0;case 5:return i*j%2+i*j%3===0;case 6:return(i*j%2+i*j%3)%2===0;case 7:return(i*j%3+(i+j)%2)%2===0;}}
+  var G15=1335,G18=7973,G15M=21522;
+  function _bd(d){var n=0;while(d){n++;d>>>=1;}return n;}
+  function _bti(d){var x=d<<10;while(_bd(x)-_bd(G15)>=0)x^=G15<<_bd(x)-_bd(G15);return(d<<10|x)^G15M;}
+  function _btn(d){var x=d<<12;while(_bd(x)-_bd(G18)>=0)x^=G18<<_bd(x)-_bd(G18);return d<<12|x;}
+  function _lb(m,t){if(t<10){if(m===4||m===8)return 8;}else if(t<27){if(m===4)return 16;if(m===8)return 10;}else{if(m===4)return 16;if(m===8)return 12;}return 8;}
+  var _RST=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,14],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,18],[4,40,14,2,41,14],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,43],[6,43,19,2,44,19],[6,43,15,2,44,15]];
+  function _rs(n,ecl){var t=_RST[(n-1)*4+ecl],r=[];for(var i=0;i<t.length;i+=3)for(var j=0;j<t[i];j++)r.push({tc:t[i+1],dc:t[i+2]});return r;}
+  function Buf(){this.buf=[];this.length=0;}
+  Buf.prototype={put:function(n,l){for(var i=0;i<l;i++)this.putBit(!!(n>>>(l-i-1)&1));},len:function(){return this.length;},putBit:function(b){var i=Math.floor(this.length/8);if(this.buf.length<=i)this.buf.push(0);if(b)this.buf[i]|=0x80>>this.length%8;this.length++;}};
+  function _cd(n,ecl,dl){var rs=_rs(n,ecl),buf=new Buf();for(var i=0;i<dl.length;i++){var d=dl[i];buf.put(d.mode,4);buf.put(d.getLength(),_lb(d.mode,n));d.write(buf);}var tot=0;for(var i=0;i<rs.length;i++)tot+=rs[i].dc;if(buf.len()+4<=tot*8)buf.put(0,4);while(buf.len()%8)buf.putBit(false);while(buf.len()<tot*8){buf.put(0xEC,8);if(buf.len()<tot*8)buf.put(0x11,8);}var off=0,mdc=0,mec=0,dd=[],ed=[];for(var r=0;r<rs.length;r++){var dc=rs[r].dc,ec=rs[r].tc-dc;mdc=Math.max(mdc,dc);mec=Math.max(mec,ec);dd[r]=[];for(var i=0;i<dc;i++)dd[r][i]=0xff&buf.buf[i+off];off+=dc;var rp=_ecp(ec),raw=new Poly(dd[r],rp.len()-1),mod=raw.mod(rp);ed[r]=[];for(var i=0;i<rp.len()-1;i++){var mi=i+mod.len()-rp.len()+1;ed[r][i]=mi>=0?mod.get(mi):0;}}var tc=0;for(var i=0;i<rs.length;i++)tc+=rs[i].tc;var data=new Array(tc),idx=0;for(var i=0;i<mdc;i++)for(var r=0;r<rs.length;r++)if(i<dd[r].length)data[idx++]=dd[r][i];for(var i=0;i<mec;i++)for(var r=0;r<rs.length;r++)if(i<ed[r].length)data[idx++]=ed[r][i];return data;}
+  function _lp(q){var mc=q.getModuleCount(),lp=0;for(var r=0;r<mc;r++)for(var c=0;c<mc;c++){var s=0,dk=q.isDark(r,c);for(var dr=-1;dr<=1;dr++)for(var dc=-1;dc<=1;dc++){if(r+dr<0||mc<=r+dr||c+dc<0||mc<=c+dc||!dr&&!dc)continue;if(dk===q.isDark(r+dr,c+dc))s++;}if(s>5)lp+=s-2;}for(var r=0;r<mc-1;r++)for(var c=0;c<mc-1;c++){var n=0;if(q.isDark(r,c))n++;if(q.isDark(r+1,c))n++;if(q.isDark(r,c+1))n++;if(q.isDark(r+1,c+1))n++;if(!n||n===4)lp+=3;}var dk=0;for(var c=0;c<mc;c++)for(var r=0;r<mc;r++)if(q.isDark(r,c))dk++;return lp+Math.abs(100*dk/mc/mc-50)/5*10;}
+  function _type(s){var t=1,l=encodeURI(s).replace(/%[0-9a-fA-F]{2}/g,'_').length;for(;t<40;t++){var rs=_rs(t,L.M),mx=0;for(var i=0;i<rs.length;i++)mx+=rs[i].dc;if((mx*8-4-_lb(4,t)>>3)>=l)break;}return t;}
+  // Draw QR to canvas
+  var m=new Model(_type(text),L.M);
+  m.addData(text);
+  m.make();
+  var n=m.getModuleCount(),w=128/n,h=128/n;
+  var cell=8;var margin=cell*4;var sz=n*cell+margin*2;
+  canvas.width=sz;canvas.height=sz;
+  canvas.style.width=Math.min(sz,280)+'px';canvas.style.height=Math.min(sz,280)+'px';
+  var ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,sz,sz);
+  for(var r=0;r<n;r++)for(var c=0;c<n;c++){
+    ctx.fillStyle=m.isDark(r,c)?'#000000':'#ffffff';
+    ctx.fillRect(margin+c*cell,margin+r*cell,cell,cell);
+  }
+}
+</script>
+<script>
+'use strict';
+// ── iOS DETECTION ──
+var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+var _isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+// ══════════════════════════════════════════════════════════════════
+// INDEXEDDB STORAGE (works on file://, http://, everywhere)
+// iOS Safari: IDB is unreliable in standalone PWA mode before iOS 15.4
+// Fallback: use localStorage as primary on iOS, IDB on other platforms
+// ══════════════════════════════════════════════════════════════════
+var _mem={},_idbReady=false,_idbDb=null;
+var _IDB_NAME='VaultKeyDB8',_IDB_STORE='kv';
+function _idbOpen(cb){
+  // Fallback: if IDB unavailable (file://, private mode, error), run anyway with _mem only
+  var called=false;
+  function done(){if(!called){called=true;cb();}}
+  try{
+    var req=indexedDB.open(_IDB_NAME,1);
+    req.onupgradeneeded=function(e){
+      try{e.target.result.createObjectStore(_IDB_STORE,{keyPath:'k'});}catch(ex){}
+    };
+    req.onsuccess=function(e){
+      try{_idbDb=e.target.result;}catch(ex){}
+      done();
+    };
+    req.onerror=function(){done();}; // IDB failed — proceed with memory-only storage
+    req.onblocked=function(){done();}; // Another tab has DB open
+    // Hard timeout: if IDB hangs for any reason, proceed after 800ms
+    setTimeout(done,800);
+  }catch(ex){
+    // indexedDB not available at all (some private/secure contexts)
+    done();
+  }
+}
+function _idbWrite(key,val){
+  _mem[key]=val;
+  // Always write to localStorage as fallback (especially important for iOS)
+  try{localStorage.setItem('vk_'+key,val);}catch(ex){}
+  if(!_idbDb)return;
+  try{
+    var tx=_idbDb.transaction(_IDB_STORE,'readwrite');
+    tx.objectStore(_IDB_STORE).put({k:key,v:val});
+  }catch(ex){}
+}
+function _idbDelete(key){
+  delete _mem[key];
+  try{localStorage.removeItem('vk_'+key);}catch(ex){}
+  if(!_idbDb)return;
+  try{
+    var tx=_idbDb.transaction(_IDB_STORE,'readwrite');
+    tx.objectStore(_IDB_STORE).delete(key);
+  }catch(ex){}
+}
+function _idbClear(){
+  _mem={};
+  try{
+    var toRemove=[];
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.startsWith('vk_'))toRemove.push(k);}
+    toRemove.forEach(function(k){localStorage.removeItem(k);});
+  }catch(ex){}
+  if(!_idbDb)return;
+  try{
+    var tx=_idbDb.transaction(_IDB_STORE,'readwrite');
+    tx.objectStore(_IDB_STORE).clear();
+  }catch(ex){}
+}
+var _ls={
+  getItem:function(k){return _mem.hasOwnProperty(k)?_mem[k]:null;},
+  setItem:function(k,v){_idbWrite(k,v);},
+  removeItem:function(k){_idbDelete(k);},
+  clear:function(){_idbClear();}
+};
+
+// ══════════════════════════════════════════════════════════════════
+// APP INIT
+// ══════════════════════════════════════════════════════════════════
+var MK='vk8_meta', SK='vk8_vault';
+var masterPw='', entries=[], editId=null, editOrigPw='', detId=null;
+var activecat='All', lastActivity=Date.now(), autoLockInt=null;
+var setupPw='', setupRkey='', setupSQs=[], setupSecret='', setup2fa=false;
+var _pec=null,_psc=null;
+
+function _vkInit(){
+  _idbOpen(function(){
+    var req=_idbDb.transaction(_IDB_STORE,'readonly').objectStore(_IDB_STORE).getAll();
+    req.onsuccess=function(e){
+      e.target.result.forEach(function(r){_mem[r.k]=r.v;});
+      // If IDB was empty (first load or iOS cleared it), restore from localStorage
+      if(e.target.result.length===0){
+        try{
+          for(var i=0;i<localStorage.length;i++){
+            var lk=localStorage.key(i);
+            if(lk&&lk.startsWith('vk_')){
+              var realKey=lk.slice(3);
+              if(!_mem[realKey])_mem[realKey]=localStorage.getItem(lk);
+            }
+          }
+        }catch(ex){}
+      }
+      _idbReady=true;
+      // Restore skin
+      var sk=_ls.getItem('vk8_skin')||'personal';
+      document.documentElement.setAttribute('data-skin',sk);
+      updateSkinBtns();
+
+      // Restore font size
+      var savedPx=parseInt(_ls.getItem('vk8_fontsize')||'15',10);
+      document.documentElement.style.fontSize=savedPx+'px';
+      document.querySelectorAll('#fs-slider').forEach(function(sl){sl.value=savedPx;});
+      // Restore light mode
+      if(_ls.getItem('vk8_lightmode')==='1'){
+        document.body.classList.add('light-mode');
+        var lmBtn=document.getElementById('lm-btn');
+        if(lmBtn)lmBtn.textContent='🌙';
+      }
+      // Route to correct screen
+      var m=meta();
+      if(!m||!m.pwHash){show('tierScreen');}
+      else{
+        document.getElementById('lockTitle').textContent='VaultKey';
+        checkAlarm();
+        show('lockScreen');
+        if(_ls.getItem(SK+'_lockInitiated')){setTimeout(function(){ltab('ex');showCountdown();},200);}
+      }
+    };
+  });
+}
+
+document.addEventListener('DOMContentLoaded',_vkInit);
+document.addEventListener('mousemove',function(){lastActivity=Date.now();});
+document.addEventListener('keydown',function(){lastActivity=Date.now();});
+document.addEventListener('touchstart',function(){lastActivity=Date.now();},{passive:true});
+document.addEventListener('touchmove',function(){lastActivity=Date.now();},{passive:true});
+
+// SW registration removed — incompatible with file:// protocol
+
+// ══════════════════════════════════════════════════════════════════
+// CRYPTO
+// ══════════════════════════════════════════════════════════════════
+async function deriveKey(pw,salt){
+  var raw=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),{name:'PBKDF2'},false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:310000,hash:'SHA-256'},raw,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function enc(pt,pw){
+  var salt=crypto.getRandomValues(new Uint8Array(16));
+  var iv=crypto.getRandomValues(new Uint8Array(12));
+  var key=await deriveKey(pw,salt);
+  var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(pt));
+  var out=new Uint8Array(salt.length+iv.length+ct.byteLength);
+  out.set(salt);out.set(iv,16);out.set(new Uint8Array(ct),28);
+  return btoa(String.fromCharCode(...out));
+}
+async function dec(ctB64,pw){
+  var raw=Uint8Array.from(atob(ctB64),c=>c.charCodeAt(0));
+  var salt=raw.slice(0,16),iv=raw.slice(16,28),ct=raw.slice(28);
+  var key=await deriveKey(pw,salt);
+  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);
+  return new TextDecoder().decode(pt);
+}
+async function sha256hex(s){
+  var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function b32bytes(b32){var a='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';var bits=0,val=0,out=[];for(var c of b32.toUpperCase().replace(/=+$/,'')){val=(val<<5)|a.indexOf(c);bits+=5;if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8;}}return new Uint8Array(out);}
+async function totp(secret){
+  var t=Math.floor(Date.now()/1000/30);
+  var key=await crypto.subtle.importKey('raw',b32bytes(secret),{name:'HMAC',hash:'SHA-1'},false,['sign']);
+  var msg=new DataView(new ArrayBuffer(8));msg.setUint32(4,t);
+  var sig=await crypto.subtle.sign('HMAC',key,msg.buffer);
+  var arr=new Uint8Array(sig),off=arr[19]&0xf;
+  return String((((arr[off]&0x7f)<<24)|((arr[off+1]&0xff)<<16)|((arr[off+2]&0xff)<<8)|(arr[off+3]&0xff))%1000000).padStart(6,'0');
+}
+function genSecret(){var c='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',s='';var a=new Uint8Array(32);crypto.getRandomValues(a);for(var b of a)s+=c[b%32];return s;}
+function genRkey(){var a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a).map(b=>b.toString(16).padStart(2,'0').toUpperCase()).join('').match(/.{4}/g).join('-');}
+
+// ══════════════════════════════════════════════════════════════════
+// SECURITY QUESTIONS
+// ══════════════════════════════════════════════════════════════════
+var allSQ=['What was the name of your first pet?','What city were you born in?','What is your mother\'s maiden name?','What was the make of your first car?','What was the name of your primary school?','What is the name of the street you grew up on?','What was your childhood nickname?','What is your oldest sibling\'s middle name?'];
+function lev(a,b){var m=a.length,n=b.length,d=[];for(var i=0;i<=m;i++)d[i]=[i];for(var j=0;j<=n;j++)d[0][j]=j;for(var j=1;j<=n;j++)for(var i=1;i<=m;i++){d[i][j]=a[i-1]===b[j-1]?d[i-1][j-1]:1+Math.min(d[i-1][j],d[i][j-1],d[i-1][j-1]);}return d[m][n];}
+function norm(s){return s.toLowerCase().trim().replace(/[''`]/g,"'").replace(/\s+/g,' ');}
+function checkAns(sq,input){var a=norm(sq),b=norm(input);return a===b||lev(a,b)<=2;}
+function renderSQ(){
+  var pool=[...allSQ];var chosen=[];
+  for(var i=0;i<3;i++){var idx=Math.floor(Math.random()*pool.length);chosen.push(pool.splice(idx,1)[0]);}
+  setupSQs=chosen;
+  document.getElementById('sqContainer').innerHTML=chosen.map(function(q,i){
+    return '<label class="flabel">'+esc(q)+'</label><input class="finput" type="text" id="sq'+i+'" placeholder="Your answer">';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// META / STORAGE HELPERS
+// ══════════════════════════════════════════════════════════════════
+function meta(){return JSON.parse(_ls.getItem(MK)||'{}');}
+function saveMeta(m){_ls.setItem(MK,JSON.stringify(m));}
+
+// ══════════════════════════════════════════════════════════════════
+// SCREEN ROUTING
+// ══════════════════════════════════════════════════════════════════
+function show(id){
+  ['tierScreen','setupScreen','lockScreen','vaultScreen','executorScreen']
+    .forEach(function(s){document.getElementById(s).classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  if(id==='lockScreen')setTimeout(function(){var el=document.getElementById('mpInput');if(el)el.focus();},100);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TIER SELECTION & SETUP
+// ══════════════════════════════════════════════════════════════════
+var selectedTier='pro';
+function selectTier(t){
+  selectedTier=t;
+  document.querySelectorAll('.tier-card').forEach(function(c){c.classList.remove('selected');});
+  var el=document.querySelector('[data-tier="'+t+'"]');
+  if(el)el.classList.add('selected');
+}
+function startSetup(basicFree){
+  if(basicFree)selectedTier='basic';
+  setdot(0,'a');setdot(1,'');setdot(2,'');setdot(3,'');setdot(4,'');
+  show('setupScreen');
+  ['s0','s1','s2','s3','s4'].forEach(function(id){document.getElementById(id).style.display='none';});
+  document.getElementById('s0').style.display='block';
+}
+function setdot(i,state){document.getElementById('d'+i).className='dot'+(state==='a'?' active':state==='d'?' done':'');}
+function gostep(hide,show2){document.getElementById('s'+hide).style.display='none';document.getElementById('s'+show2).style.display='block';}
+
+async function s0next(){
+  var pw=document.getElementById('spw').value,pw2=document.getElementById('spw2').value;
+  var err=document.getElementById('s0err');
+  if(pw.length<8){err.textContent='Password must be at least 8 characters';return;}
+  if(pw!==pw2){err.textContent='Passwords do not match';return;}
+  setupPw=pw;
+  setupRkey=genRkey();
+  document.getElementById('rKeyDisplay').textContent=setupRkey;
+  setdot(0,'d');setdot(1,'a');gostep(0,1);
+}
+function copyRkey(){navigator.clipboard.writeText(setupRkey);toast('Recovery key copied',true);}
+async function s1next(){
+  var m=meta();
+  m.hint=document.getElementById('shint').value.trim();
+  m.recoveryKey=await sha256hex(setupRkey);
+  saveMeta(m);
+  goSQ();
+}
+function s1skip(){goSQ();}
+function goSQ(){setdot(1,'d');setdot(2,'a');gostep(1,2);renderSQ();}
+async function saveSQ(){
+  var answers=[],err=document.getElementById('sqErr');
+  for(var i=0;i<3;i++){
+    var v=document.getElementById('sq'+i).value.trim();
+    if(!v){err.textContent='Please answer all three questions';return;}
+    answers.push({q:setupSQs[i],a:await sha256hex(norm(v))});
+  }
+  var m=meta();m.sqs=answers;saveMeta(m);
+  err.textContent='';goEx();
+}
+function skipSQ(){goEx();}
+function goEx(){setdot(2,'d');setdot(3,'a');gostep(2,3);}
+function selectWait(h){/* captured in saveExecutor */}
+async function saveExecutor(){
+  var name=document.getElementById('exName').value.trim();
+  var rel=document.getElementById('exRel').value.trim();
+  var email=document.getElementById('exEmail').value.trim();
+  var code=document.getElementById('exCode').value;
+  var wait=parseInt(document.getElementById('exWait').value);
+  var err=document.getElementById('exErr2');
+  if(!name||!email||!code){err.textContent='Name, email and access code are required';return;}
+  if(code.length<8){err.textContent='Access code must be at least 8 characters';return;}
+  var m=meta();
+  m.executor={name,relation:rel,email,accessCodeHash:await sha256hex(code),waitHours:wait,active:true};
+  saveMeta(m);
+  err.textContent='';go2FA();
+}
+function skipExecutor(){go2FA();}
+function go2FA(){
+  setdot(3,'d');setdot(4,'a');gostep(3,4);
+  setupSecret=genSecret();
+  document.getElementById('secretDisplay').textContent=setupSecret;
+  var ota='otpauth://totp/VaultKey?secret='+setupSecret+'&issuer=VaultKey';
+  var canvas=document.getElementById('qrCanvas');
+  canvas.style.display='none';
+  // Use qrserver.com (battle-tested, reliable)
+  // The TOTP secret is transmitted over HTTPS to a read-only QR generator
+  // and is also displayed on screen — this is an acceptable tradeoff for setup
+  var img=document.getElementById('qrImg');
+  if(!img){
+    img=document.createElement('img');
+    img.id='qrImg';
+    img.style.cssText='display:block;margin:16px auto;width:200px;height:200px;image-rendering:pixelated;border:8px solid #fff;border-radius:4px;';
+    canvas.parentNode.insertBefore(img,canvas);
+  }
+  img.onerror=function(){
+    // Offline fallback — use local canvas renderer
+    img.style.display='none';
+    canvas.style.display='block';
+    try{_drawQR(canvas,ota);}catch(e){}
+  };
+  img.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=10&data='+encodeURIComponent(ota);
+  img.style.display='block';
+  digFocus('tfaDigits');
+}
+function copySecret(){navigator.clipboard.writeText(setupSecret);toast('Secret copied',true);}
+async function verify2FA(){
+  var code=digCode('tfaDigits');
+  if(code.length<6){document.getElementById('tfaErr').textContent='Enter the 6-digit code';return;}
+  var expect=await totp(setupSecret);
+  if(code!==expect){document.getElementById('tfaErr').textContent='Incorrect code — check your authenticator app';return;}
+  setup2fa=true;finalizeSetup();
+}
+function skip2FA(){setup2fa=false;setupSecret='';finalizeSetup();}
+async function finalizeSetup(){
+  var m=meta();
+  m.pwHash=await sha256hex(setupPw);
+  m.tier=selectedTier;
+  if(setup2fa&&setupSecret){m.totp=setupSecret;m.twofa=true;}
+  saveMeta(m);
+  _ls.setItem(SK,await enc(JSON.stringify([]),setupPw));
+  masterPw=setupPw;entries=[];loadSettings();
+  showTierPill();show('vaultScreen');renderAll();
+  toast('Vault created successfully',true);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// LOCK / UNLOCK
+// ══════════════════════════════════════════════════════════════════
+function ltab(t){
+  ['pw','rec','ex','file'].forEach(function(x){
+    var panel=document.getElementById('l'+x.charAt(0).toUpperCase()+x.slice(1)+'Panel');
+    var btn=document.getElementById('lt'+x.charAt(0).toUpperCase()+x.slice(1));
+    if(panel)panel.style.display='none';
+    if(btn)btn.classList.remove('active');
+  });
+  var panel=document.getElementById('l'+t.charAt(0).toUpperCase()+t.slice(1)+'Panel');
+  var btn=document.getElementById('lt'+t.charAt(0).toUpperCase()+t.slice(1));
+  if(panel)panel.style.display='block';
+  if(btn)btn.classList.add('active');
+  // Auto-focus appropriate input
+  if(t==='pw')setTimeout(function(){var el=document.getElementById('mpInput');if(el)el.focus();},80);if(t==='ex')showCountdown();
+}
+function rtab(t){
+  ['Key','Email','Sms'].forEach(function(x){
+    document.getElementById('r'+x+'Panel').style.display='none';
+    document.getElementById('lr'+x).classList.remove('active');
+  });
+  document.getElementById('r'+t+'Panel').style.display='block';
+  document.getElementById('lr'+t).classList.add('active');
+}
+function showHint(){var m=meta(),box=document.getElementById('hintBox');box.style.display='block';box.textContent=m.hint?'Hint: '+m.hint:'No hint was set.';}
+function confirmReset(){if(confirm('This will permanently delete all vault data and cannot be undone.\n\nContinue?')){_ls.clear();location.reload();}}
+
+async function tryUnlock(){
+  var pw=document.getElementById('mpInput').value;
+  var err=document.getElementById('mpErr');
+  if(!pw){err.textContent='Enter your master password';return;}
+  var m=meta();
+  var h=await sha256hex(pw);
+  if(h!==m.pwHash){err.textContent='Incorrect password';return;}
+  if(m.twofa&&m.totp){
+    document.getElementById('tfa-unlock').style.display='block';
+    digFocus('unlockDigits');
+    var code=digCode('unlockDigits');
+    if(code.length<6){
+      if(document.getElementById('tfa-unlock').style.display==='block'&&code.length===0){
+        document.getElementById('tfa-unlock').style.display='block';
+        err.textContent='Enter your 2FA code';return;
+      }
+    }
+    var expect=await totp(m.totp);
+    if(code!==expect){err.textContent='Incorrect 2FA code';return;}
+  }
+  var ct=_ls.getItem(SK);
+  if(!ct){masterPw=pw;entries=[];await saveVault();}
+  else{
+    try{var pt=await dec(ct,pw);entries=JSON.parse(pt);}
+    catch(e){err.textContent='Decryption failed — incorrect password?';return;}
+  }
+  masterPw=pw;err.textContent='';loadSettings();showTierPill();show('vaultScreen');renderAll();checkVaultAlarm();
+}
+
+async function tryExecutorUnlock(){
+  var name=document.getElementById('exLoginName').value.trim();
+  var code=document.getElementById('exLoginCode').value.trim();
+  var err=document.getElementById('exErr');
+  if(!name||!code){err.textContent='Name and access code are required';return;}
+  var m=meta();
+  if(!m.executor||!m.executor.active){err.textContent='No executor access is configured for this vault';return;}
+  var codeHash=await sha256hex(code);
+  if(codeHash!==m.executor.accessCodeHash){err.textContent='Incorrect access code';return;}
+
+  var now=Date.now();
+  var pending=_ls.getItem(SK+'_lockInitiated');
+
+  if(!pending){
+    // First correct attempt — initiate time-lock countdown
+    var logEntry={
+      timestamp:new Date().toISOString(),
+      executorName:name,
+      configuredExecutor:m.executor.name,
+      relation:m.executor.relation,
+      waitHours:m.executor.waitHours,
+      browserInfo:navigator.userAgent.slice(0,80),
+      alarmFired:true,
+      type:'initiation',
+    };
+    var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+    log.unshift(logEntry);
+    _ls.setItem(SK+'_accesslog',JSON.stringify(log));
+    _ls.setItem(SK+'_alarmPending','1');
+    _ls.setItem(SK+'_lockInitiated',String(now));
+    _ls.setItem(SK+'_lockName',name);
+    _ls.setItem(SK+'_lockWaitMs',String((m.executor.waitHours||24)*3600000));
+    err.textContent='';
+    sendOwnerAlert(name,m.executor);
+    showCountdown();
+    return;
+  }
+
+  // Subsequent attempts — check if countdown has elapsed
+  var elapsed=now-parseInt(pending,10);
+  var waitMs=parseInt(_ls.getItem(SK+'_lockWaitMs')||'86400000',10);
+
+  if(elapsed<waitMs){
+    // Still counting down — show timer, do not grant access
+    err.textContent='';
+    showCountdown();
+    return;
+  }
+
+  // Countdown elapsed — grant access
+  _ls.removeItem(SK+'_lockInitiated');
+  _ls.removeItem(SK+'_lockName');
+  _ls.removeItem(SK+'_lockWaitMs');
+  var logEntry={
+    timestamp:new Date().toISOString(),
+    executorName:name,
+    configuredExecutor:m.executor.name,
+    relation:m.executor.relation,
+    waitHours:m.executor.waitHours,
+    browserInfo:navigator.userAgent.slice(0,80),
+    alarmFired:false,
+    type:'consummation',
+  };
+  var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+  log.unshift(logEntry);
+  _ls.setItem(SK+'_accesslog',JSON.stringify(log));
+  var ct=_ls.getItem(SK);
+  if(ct){try{var pt=await dec(ct,masterPw||'');entries=JSON.parse(pt);}catch(e){entries=[];}}
+  var sealedCount=entries.filter(function(e){return e.prv==='sealed';}).length;
+  if(sealedCount>0){entries=entries.filter(function(e){return e.prv!=='sealed';});if(masterPw)await saveVault();}
+  window.executorMode=true;
+  err.textContent='';
+  var cb=document.getElementById('countdownBanner');
+  if(cb)cb.style.display='none';
+  renderExecutorView(name,m.executor,logEntry);
+  show('executorScreen');
+}
+
+function sendOwnerAlert(executorName,executorConfig){
+  var m=meta();
+  var waitHours=executorConfig?executorConfig.waitHours||24:24;
+  var subject=encodeURIComponent('VaultKey Alert: Executor Access Initiated');
+  var unlockTime=new Date(Date.now()+waitHours*3600000);
+  var body=encodeURIComponent(
+    'SECURITY ALERT - VaultKey Executor Access\n\n'+
+    'Someone has entered your executor access code and initiated a time-lock request.\n\n'+
+    'Executor name entered: '+executorName+'\n'+
+    'Configured executor: '+(executorConfig?executorConfig.name:'Unknown')+'\n'+
+    'Access will be granted: '+unlockTime.toLocaleString()+'\n'+
+    'Time-lock duration: '+waitHours+' hours\n\n'+
+    'If you are alive and able to act:\n'+
+    '1. Open your VaultKey vault immediately\n'+
+    '2. Log in with your master password\n'+
+    '3. Click "Cancel Executor Access" in the alert banner\n\n'+
+    'If you do not cancel within '+waitHours+' hours, the executor will gain access to your estate entries.\n\n'+
+    'This alert was generated by VaultKey on '+new Date().toLocaleString()+'.'
+  );
+  // Primary: open mailto in owner's email client (works offline)
+  var rEmail=m.rEmail||'';
+  if(rEmail){
+    var link=document.createElement('a');
+    link.href='mailto:'+rEmail+'?subject='+subject+'&body='+body;
+    link.style.display='none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  // Also show an in-app alert so owner knows notification was sent
+  toast('Owner alerted: executor access initiated',true);
+}
+function showCountdown(){
+  var pending=_ls.getItem(SK+'_lockInitiated');
+  var waitMs=parseInt(_ls.getItem(SK+'_lockWaitMs')||'86400000',10);
+  var banner=document.getElementById('countdownBanner');
+  var display=document.getElementById('countdownDisplay');
+  if(!banner||!pending){return;}
+  banner.style.display='block';
+  function tick(){
+    var remaining=waitMs-(Date.now()-parseInt(_ls.getItem(SK+'_lockInitiated')||'0',10));
+    if(remaining<=0){display.textContent='Access now available - enter code again to complete';return;}
+    var h=Math.floor(remaining/3600000);
+    var mn=Math.floor((remaining%3600000)/60000);
+    var s=Math.floor((remaining%60000)/1000);
+    display.textContent=(h>0?String(h).padStart(2,'0')+':':'')+String(mn).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+  tick();
+  if(window._countdownInterval)clearInterval(window._countdownInterval);
+  window._countdownInterval=setInterval(function(){
+    var r=waitMs-(Date.now()-parseInt(_ls.getItem(SK+'_lockInitiated')||'0',10));
+    if(r<=0){clearInterval(window._countdownInterval);tick();}else{tick();}
+  },1000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EXECUTOR VIEW RENDERING
+// ══════════════════════════════════════════════════════════════════
+function renderExecutorView(executorName,executorConfig,logEntry){
+  var m=meta();
+  // Header
+  document.getElementById('exViewTitle').textContent='Estate Access Document';
+  document.getElementById('exViewMeta').innerHTML=
+    'Account holder: <strong>'+esc(m.hint?'Vault owner':'Account holder')+'</strong><br>'+
+    'Accessed by: <strong>'+esc(executorName)+'</strong><br>'+
+    (executorConfig?'Authorised executor: <strong>'+esc(executorConfig.name)+'</strong> ('+esc(executorConfig.relation||'')+')</strong>':'');
+  document.getElementById('exAuthStatus').textContent='✓ Access Granted';
+  document.getElementById('exAuditLine').textContent='Logged: '+new Date(logEntry.timestamp).toLocaleString();
+
+  // Sort entries: estate first, then private, then sealed (already deleted)
+  var estateEntries=entries.filter(function(e){return (e.prv||'estate')==='estate';});
+  var privateEntries=entries.filter(function(e){return e.prv==='private';});
+
+  // Group estate entries by category
+  var cats={};
+  estateEntries.forEach(function(e){
+    var cat=e.cat||'☁️ Other';
+    if(!cats[cat])cats[cat]=[];
+    cats[cat].push(e);
+  });
+
+  var html='';
+
+  // Estate sections by category
+  if(estateEntries.length>0){
+    Object.keys(cats).forEach(function(cat){
+      var catEntries=cats[cat];
+      var icon=cat.split(' ')[0];
+      var catName=cat.split(' ').slice(1).join(' ')||cat;
+      html+='<div class="ex-section">';
+      html+='<div class="ex-section-hdr">';
+      html+='<div class="ex-section-icon">'+icon+'</div>';
+      html+='<div class="ex-section-title">'+esc(catName)+'</div>';
+      html+='<div class="ex-section-count">'+catEntries.length+' account'+(catEntries.length!==1?'s':'')+'</div>';
+      html+='</div>';
+      catEntries.forEach(function(e,idx){
+        var uid='exf_'+e.id+'_'+idx;
+        html+='<div class="ex-card">';
+        html+='<div class="ex-card-top">';
+        html+='<div class="ex-card-icon">'+icon+'</div>';
+        html+='<div class="ex-card-name">'+esc(e.name)+'</div>';
+        html+='</div>';
+        html+='<div class="ex-fields">';
+        // Username
+        html+='<div class="ex-field">';
+        html+='<div class="ex-field-label">Username / Email</div>';
+        html+='<div class="ex-copy-row">';
+        html+='<div class="ex-field-val">'+esc(e.user)+'</div>';
+        html+='<button class="ex-copy-btn" id="cu_'+uid+'" onclick="exCopy(\''+escA(e.user)+'\',\'cu_'+uid+'\')">Copy</button>';
+        html+='</div>';
+        html+='</div>';
+        // Password
+        html+='<div class="ex-field">';
+        html+='<div class="ex-field-label">Password</div>';
+        html+='<div class="ex-copy-row">';
+        html+='<div class="ex-field-val masked" id="pv_'+uid+'">••••••••••</div>';
+        html+='<div style="display:flex;gap:4px;">';
+        html+='<button class="ex-show-btn" onclick="exTogglePw(this,\''+escA(e.pw)+'\',\'pv_'+uid+'\')">Show</button>';
+        html+='<button class="ex-copy-btn" id="cp_'+uid+'" onclick="exCopy(\''+escA(e.pw)+'\',\'cp_'+uid+'\')">Copy</button>';
+        html+='</div>';
+        html+='</div>';
+        html+='</div>';
+        // URL if present
+        if(e.url){
+          html+='<div class="ex-field" style="grid-column:1/-1">';
+          html+='<div class="ex-field-label">Website URL</div>';
+          html+='<div class="ex-copy-row">';
+          html+='<div class="ex-field-val" style="font-family:var(--body-font);font-size:12px;">'+esc(e.url)+'</div>';
+          html+='<button class="ex-copy-btn" id="curl_'+uid+'" onclick="exCopy(\''+escA(e.url)+'\',\'curl_'+uid+'\')">Copy</button>';
+          html+='</div>';
+          html+='</div>';
+        }
+        html+='</div>';
+        // Notes if present
+        if(e.notes){
+          html+='<div class="ex-notes">';
+          html+='<div class="ex-notes-label">Notes / Additional Details</div>';
+          html+=esc(e.notes).replace(/\n/g,'<br>');
+          html+='</div>';
+        }
+        html+='</div>';
+      });
+      html+='</div>';
+    });
+  } else {
+    html+='<div class="infobox" style="text-align:center;padding:24px;">No estate-level entries have been configured by the account holder.</div>';
+  }
+
+  // Private entries section
+  if(privateEntries.length>0){
+    html+='<div class="ex-section" style="margin-top:24px;">';
+    html+='<div class="ex-section-hdr">';
+    html+='<div class="ex-section-icon">🔒</div>';
+    html+='<div class="ex-section-title">Private Accounts — Access Restricted</div>';
+    html+='<div class="ex-section-count">'+privateEntries.length+' account'+(privateEntries.length!==1?'s':'')+'</div>';
+    html+='</div>';
+    html+='<div class="infobox warn" style="margin-bottom:10px;font-size:12px;">The account holder marked the following accounts as Private. You can see that they exist, but their credentials are not accessible. This is a legally binding privacy instruction.</div>';
+    privateEntries.forEach(function(e){
+      html+='<div class="ex-blocked priv">';
+      html+='<div class="ex-blocked-icon">'+((e.cat||'').split(' ')[0]||'🔒')+'</div>';
+      html+='<div><div class="ex-blocked-name">'+esc(e.name)+'</div>';
+      html+='<div class="ex-blocked-desc">'+esc(e.cat||'')+'  -  Access restricted by account holder instruction</div></div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+
+  document.getElementById('exEntriesContainer').innerHTML=html;
+}
+
+function exCopy(val,btnId){
+  navigator.clipboard.writeText(val);
+  var btn=document.getElementById(btnId);
+  if(btn){btn.textContent='✓';btn.classList.add('done');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},2000);}
+  if(getSettings().clipclear)setTimeout(function(){navigator.clipboard.writeText('');},30000);
+}
+function exTogglePw(btn,pw,valId){
+  var el=document.getElementById(valId);
+  if(btn.textContent==='Show'){
+    el.textContent=pw;el.classList.remove('masked');btn.textContent='Hide';
+  }else{
+    el.textContent='••••••••••';el.classList.add('masked');btn.textContent='Show';
+  }
+}
+function closeExecutorView(){
+  window.executorMode=false;
+  show('lockScreen');
+  document.getElementById('exLoginName').value='';
+  document.getElementById('exLoginCode').value='';
+  document.getElementById('exErr').textContent='';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EXECUTOR FILE EXPORT
+// ══════════════════════════════════════════════════════════════════
+function openExportExecutor(){
+  document.getElementById('exExportCode').value='';
+  document.getElementById('exExportCode2').value='';
+  document.getElementById('exExportName').value='';
+  document.getElementById('exExportErr').textContent='';
+  document.getElementById('exExportCode3Wrap').style.display='none';
+  var m=meta();
+  if(m.executor&&m.executor.name)document.getElementById('exExportName').value=m.executor.name;
+  document.getElementById('exportExOverlay').classList.add('open');
+}
+async function doExportExecutor(){
+  var code=document.getElementById('exExportCode').value.trim();
+  var code2=document.getElementById('exExportCode2').value.trim();
+  var exName=document.getElementById('exExportName').value.trim();
+  var err=document.getElementById('exExportErr');
+  if(!code||code.length<8){err.textContent='Access code must be at least 8 characters';return;}
+  if(code!==code2){err.textContent='Codes do not match';return;}
+  // Build estate-only payload
+  var estateEntries=entries.filter(function(e){return (e.prv||'estate')==='estate';});
+  var privateNames=entries.filter(function(e){return e.prv==='private';}).map(function(e){return {name:e.name,cat:e.cat};});
+  var m=meta();
+  var payload=JSON.stringify({
+    type:'vaultkey_executor_document',
+    version:'8',
+    created:new Date().toISOString(),
+    executorName:exName,
+    ownerHint:m.hint||'',
+    executorConfig:m.executor||null,
+    estateEntries:estateEntries,
+    privateNames:privateNames,
+  });
+  var encrypted=await enc(payload,code);
+  var blob=new Blob([JSON.stringify({
+    vaultkey_executor:true,
+    v:8,
+    data:encrypted,
+    created:new Date().toISOString(),
+    executorName:exName,
+  })],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='VaultKey-Executor-Document-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  document.getElementById('exExportCodeDisplay').textContent=code;
+  document.getElementById('exExportCode3Wrap').style.display='block';
+  toast('Executor document generated',true);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ALARM
+// ══════════════════════════════════════════════════════════════════
+function checkAlarm(){
+  var pending=_ls.getItem(SK+'_alarmPending');
+  if(!pending)return;
+  var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+  if(!log.length)return;
+  var last=log[0];
+  var banner=document.getElementById('alarmBanner');
+  if(banner){
+    banner.classList.add('show');
+    var det=document.getElementById('alarmDetail');
+    if(det)det.innerHTML='<strong>'+esc(last.executorName)+'</strong> attempted executor access at '+new Date(last.timestamp).toLocaleString();
+  }
+}
+function checkVaultAlarm(){
+  var pending=_ls.getItem(SK+'_alarmPending');
+  if(!pending)return;
+  var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+  if(!log.length)return;
+  var last=log[0];
+  var banner=document.getElementById('vaultAlarmBanner');
+  if(banner){
+    banner.classList.add('show');
+    document.getElementById('vaultAlarmDetail').innerHTML=
+      '<strong>'+esc(last.executorName)+'</strong> &middot; '+new Date(last.timestamp).toLocaleString()+' &middot; Authorised: <strong>'+esc(last.configuredExecutor)+'</strong>';
+  }
+}
+function cancelExecutorAccess(){
+  if(!confirm('Cancel the pending executor access request?\n\nThe executor cannot access the vault until they enter the code again.'))return;
+  _ls.removeItem(SK+'_lockInitiated');
+  _ls.removeItem(SK+'_lockName');
+  _ls.removeItem(SK+'_lockWaitMs');
+  _ls.removeItem(SK+'_alarmPending');
+  if(window._countdownInterval)clearInterval(window._countdownInterval);
+  var logEntry={
+    timestamp:new Date().toISOString(),
+    executorName:'(cancelled by owner)',
+    configuredExecutor:'',
+    relation:'',
+    waitHours:0,
+    browserInfo:navigator.userAgent.slice(0,80),
+    alarmFired:false,
+    type:'cancellation',
+  };
+  var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+  log.unshift(logEntry);
+  _ls.setItem(SK+'_accesslog',JSON.stringify(log));
+  var b=document.getElementById('vaultAlarmBanner');
+  if(b)b.classList.remove('show');
+  toast('Executor access request cancelled',true);
+}
+function dismissAlarm(){
+  _ls.removeItem(SK+'_alarmPending');
+  var b=document.getElementById('alarmBanner');
+  if(b)b.classList.remove('show');
+  openAccessLog();
+}
+function openAccessLog(){
+  var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+  var body=document.getElementById('logBody');
+  if(!log.length){body.innerHTML='<div class="infobox" style="margin-top:12px;text-align:center;">No executor access attempts recorded.</div>';
+  } else {
+    body.innerHTML=log.map(function(l){
+      return '<div class="infobox" style="margin-bottom:8px;font-size:12px;">'+
+        '<strong>'+esc(l.executorName)+'</strong><br>'+
+        new Date(l.timestamp).toLocaleString()+'<br>'+
+        'Authorised executor: '+esc(l.configuredExecutor)+'</div>';
+    }).join('');
+  }
+  document.getElementById('logOverlay').classList.add('open');
+}
+function clearLog(){if(!confirm('Clear the entire access log?'))return;_ls.removeItem(SK+'_accesslog');_ls.removeItem(SK+'_alarmPending');document.getElementById('logBody').innerHTML='<div class="infobox" style="text-align:center;">Log cleared.</div>';}
+
+// ══════════════════════════════════════════════════════════════════
+// RECOVERY
+// ══════════════════════════════════════════════════════════════════
+async function doKeyRecovery(){
+  var key=document.getElementById('rKeyIn').value.trim().toUpperCase();
+  var nw=document.getElementById('rKeyNewPw').value;
+  var err=document.getElementById('rKeyErr');
+  if(!key||!nw){err.textContent='Enter your recovery key and new password';return;}
+  if(nw.length<8){err.textContent='Password must be at least 8 characters';return;}
+  var m=meta();
+  var kh=await sha256hex(key.replace(/-/g,''));
+  if(kh!==m.recoveryKey){err.textContent='Recovery key not recognised';return;}
+  masterPw=nw;_ls.setItem(SK,await enc(JSON.stringify([]),nw));entries=[];
+  err.textContent='';show('vaultScreen');loadSettings();renderAll();showTierPill();toast('Vault reset via recovery key',true);
+}
+function sendEmailCode(){var email=document.getElementById('rEmailIn').value.trim();var m=meta();if(!email||email!==m.rEmail){document.getElementById('emailErr').textContent='Email does not match registered address';return;}_pec=Math.floor(100000+Math.random()*900000).toString();alert('[DEMO] Code for '+email+':\n\n'+_pec+'\n\n(Production: emailed automatically)');document.getElementById('emailCodePanel').style.display='block';document.getElementById('sendEmailBtn').disabled=true;digFocus('emailDigits');}
+async function doEmailRecovery(){var code=digCode('emailDigits');var nw=document.getElementById('emailNewPw').value;if(code!==_pec){document.getElementById('emailErr').textContent='Incorrect code';return;}if(nw.length<8){document.getElementById('emailErr').textContent='Min 8 characters';return;}_ls.setItem(SK,await enc(JSON.stringify([]),nw));masterPw=nw;entries=[];_pec=null;show('vaultScreen');loadSettings();renderAll();showTierPill();toast('Password reset via email',true);}
+function sendSmsCode(){var phone=document.getElementById('rSmsIn').value.trim();var m=meta();if(!phone||phone!==m.rPhone){document.getElementById('smsErr').textContent='Phone does not match';return;}_psc=Math.floor(100000+Math.random()*900000).toString();alert('[DEMO] SMS code for '+phone+':\n\n'+_psc+'\n\n(Production: sent via SMS)');document.getElementById('smsCodePanel').style.display='block';document.getElementById('sendSmsBtn').disabled=true;digFocus('smsDigits');}
+async function doSmsRecovery(){var code=digCode('smsDigits');var nw=document.getElementById('smsNewPw').value;if(code!==_psc){document.getElementById('smsErr').textContent='Incorrect code';return;}if(nw.length<8){document.getElementById('smsErr').textContent='Min 8 characters';return;}_ls.setItem(SK,await enc(JSON.stringify([]),nw));masterPw=nw;entries=[];_psc=null;show('vaultScreen');loadSettings();renderAll();showTierPill();toast('Password reset via SMS',true);}
+
+// ══════════════════════════════════════════════════════════════════
+// VAULT OPERATIONS
+// ══════════════════════════════════════════════════════════════════
+async function saveVault(){_ls.setItem(SK,await enc(JSON.stringify(entries),masterPw));}
+function lockVault(){masterPw='';entries=[];window.executorMode=false;show('lockScreen');document.getElementById('mpInput').value='';document.getElementById('mpErr').textContent='';digClear('unlockDigits');document.getElementById('tfa-unlock').style.display='none';}
+function showTierPill(){var m=meta(),p=document.getElementById('tierPill'),pd=document.getElementById('planDisplay');if(p)p.textContent=(m.tier||'basic').toUpperCase();if(pd)pd.textContent=(m.tier||'basic').toUpperCase();}
+function renderAll(){renderStats();renderCats();renderEntries();}
+function renderStats(){
+  var total=entries.length;
+  var estate=entries.filter(function(e){return (e.prv||'estate')==='estate';}).length;
+  var priv=entries.filter(function(e){return e.prv==='private';}).length;
+  var sealed=entries.filter(function(e){return e.prv==='sealed';}).length;
+  var el=document.getElementById('statsRow');
+  el.innerHTML='<div class="stat-chip"><strong>'+total+'</strong>Total</div>'+
+    '<div class="stat-chip"><strong>'+estate+'</strong>Estate</div>'+
+    (priv?'<div class="stat-chip"><strong>'+priv+'</strong>Private</div>':'')+
+    (sealed?'<div class="stat-chip"><strong>'+sealed+'</strong>Sealed</div>':'');
+}
+function renderCats(){
+  var cats=['All',...new Set(entries.map(function(e){return e.cat;}))];
+  document.getElementById('catsRow').innerHTML=cats.map(function(c){
+    return '<button class="cat-btn'+(activecat===c?' active':'')+'" onclick="fcat(\''+escA(c)+'\')">'+esc(c)+'</button>';
+  }).join('');
+}
+function fcat(c){activecat=c;renderCats();renderEntries();}
+function renderEntries(){
+  var q=document.getElementById('vsearch').value.toLowerCase();
+  var f=entries.filter(function(e){var ms=!q||e.name.toLowerCase().includes(q)||e.user.toLowerCase().includes(q)||(e.url||'').toLowerCase().includes(q);return ms&&(activecat==='All'||e.cat===activecat);});
+  var el=document.getElementById('eList');
+  if(!f.length){el.innerHTML='<div class="empty"><div class="big">🔐</div><p>'+(entries.length===0?'Add your first entry — use + Add Entry above':'No results for "'+esc(q)+'"')+'</p></div>';return;}
+  el.innerHTML=f.map(function(e){
+    var prvBadge=e.prv==='private'?'<span class="pb pb-p">🔒 Private</span>':e.prv==='sealed'?'<span class="pb pb-s">🔥 Sealed</span>':'';
+    var prvCls=e.prv==='private'?' epp':e.prv==='sealed'?' eps':'';
+    return '<div class="ecard'+prvCls+'" onclick="openDet(\''+e.id+'\')">'+'<div class="eicon">'+e.cat.split(' ')[0]+'</div>'+'<div class="einfo"><div class="ename">'+esc(e.name)+prvBadge+'</div><div class="euser">'+esc(e.user)+'</div></div>'+'<div class="ecat">'+esc(e.cat.split(' ').slice(1).join(' '))+'</div>'+'<div class="eacts" onclick="event.stopPropagation()">'+'<div class="ibtn" onclick="cpPw(\''+e.id+'\')" title="Copy password">⎘</div>'+'<div class="ibtn" onclick="openEdit(\''+e.id+'\')" title="Edit">✎</div>'+'<div class="ibtn del" onclick="initDelete(\''+e.id+'\')" title="Delete">✕</div>'+'</div></div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ADD / EDIT / DELETE
+// ══════════════════════════════════════════════════════════════════
+function openAdd(){editId=null;editOrigPw='';document.getElementById('addTitle').textContent='Add Entry';['fn','fu','fp','furl','fnotes'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fc').value='🏦 Finance';setPrv('estate');document.getElementById('keepOrigBtn').style.display='none';document.getElementById('pwOrigLabel').style.display='none';document.getElementById('deleteSection').style.display='none';document.getElementById('delConfirm').classList.remove('show');updStr();document.getElementById('addOverlay').classList.add('open');setTimeout(function(){document.getElementById('fn').focus();},100);}
+function openEdit(id){var e=entries.find(function(x){return x.id===id;});if(!e)return;editId=id;editOrigPw=e.pw;document.getElementById('addTitle').textContent='Edit Entry';document.getElementById('fn').value=e.name;document.getElementById('fu').value=e.user;document.getElementById('fp').value=e.pw;document.getElementById('furl').value=e.url||'';document.getElementById('fnotes').value=e.notes||'';document.getElementById('fc').value=e.cat;setPrv(e.prv||'estate');document.getElementById('keepOrigBtn').style.display='none';document.getElementById('pwOrigLabel').style.display='none';document.getElementById('deleteSection').style.display='block';document.getElementById('delConfirm').classList.remove('show');document.getElementById('delConfirmInput').value='';document.getElementById('delBtn').disabled=true;updStr();document.getElementById('addOverlay').classList.add('open');}
+function closeAdd(){document.getElementById('addOverlay').classList.remove('open');editId=null;editOrigPw='';}
+function genPw(){var current=document.getElementById('fp').value;if(current&&!editOrigPw)editOrigPw=current;var c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';var pw='';var a=new Uint32Array(20);crypto.getRandomValues(a);for(var b of a)pw+=c[b%c.length];document.getElementById('fp').value=pw;if(editOrigPw&&editOrigPw!==pw){document.getElementById('keepOrigBtn').style.display='inline-block';var lbl=document.getElementById('pwOrigLabel');lbl.style.display='inline-block';lbl.textContent='Prev: '+editOrigPw.slice(0,3)+'•'.repeat(Math.max(0,editOrigPw.length-3));}updStr();toast('New password generated',true);}
+function keepOrig(){if(!editOrigPw)return;document.getElementById('fp').value=editOrigPw;document.getElementById('keepOrigBtn').style.display='none';document.getElementById('pwOrigLabel').style.display='none';updStr();}
+async function setPrv(lv){document.getElementById('fprv').value=lv;var cls={estate:'pe',private:'pp',sealed:'ps'};['estate','private','sealed'].forEach(function(l){var el=document.getElementById('po-'+l[0]);el.className='p-opt'+(l===lv?' '+cls[l]:'');});}
+async function saveEntry(){var name=document.getElementById('fn').value.trim(),user=document.getElementById('fu').value.trim();var pw=document.getElementById('fp').value,url=document.getElementById('furl').value.trim();var notes=document.getElementById('fnotes').value.trim(),cat=document.getElementById('fc').value;var prv=document.getElementById('fprv').value||'estate';if(!name){toast('Enter a site name');return;}if(!user){toast('Enter a username');return;}if(!pw){toast('Enter a password');return;}if(editId){var i=entries.findIndex(function(e){return e.id===editId;});entries[i]={...entries[i],name,user,pw,url,notes,cat,prv,upd:Date.now()};}else{entries.unshift({id:uid(),name,user,pw,url,notes,cat,prv,created:Date.now(),upd:Date.now()});}await saveVault();closeAdd();renderAll();toast('Entry saved',true);}
+function toggleDelConfirm(){var dc=document.getElementById('delConfirm');dc.classList.toggle('show');if(dc.classList.contains('show'))document.getElementById('delConfirmInput').focus();}
+function checkDel(input){document.getElementById('delBtn').disabled=input.value!=='DELETE';}
+async function confirmDelete(){var id=editId;if(!id)return;entries=entries.filter(function(e){return e.id!==id;});await saveVault();closeAdd();renderAll();toast('Entry deleted');}
+function initDelete(id){openEdit(id);setTimeout(function(){document.getElementById('deleteSection').scrollIntoView({behavior:'smooth'});toggleDelConfirm();},300);}
+
+// ══════════════════════════════════════════════════════════════════
+// DETAIL VIEW
+// ══════════════════════════════════════════════════════════════════
+function openDet(id){
+  var e=entries.find(function(x){return x.id===id;});if(!e)return;
+  detId=id;document.getElementById('detTitle').textContent=e.cat.split(' ')[0]+' '+e.name;
+  if(window.executorMode){
+    var prv=e.prv||'estate';
+    if(prv==='private'){document.getElementById('detBody').innerHTML='<div class="infobox warn" style="text-align:center;padding:20px;"><div style="font-size:28px;margin-bottom:8px;">🔒</div><strong>Private — Access Denied</strong><br><br>The account holder marked this entry Private. You cannot access the credentials.<br>This privacy instruction is legally binding.</div>';document.getElementById('detailOverlay').classList.add('open');return;}
+    if(prv==='sealed'){document.getElementById('detBody').innerHTML='<div class="infobox danger" style="text-align:center;padding:20px;"><div style="font-size:28px;margin-bottom:8px;">🔥</div><strong>Sealed — Permanently Deleted</strong><br><br>This entry was auto-deleted when executor access was initiated. It no longer exists.</div>';document.getElementById('detailOverlay').classList.add('open');return;}
+  }
+  var fields=[{label:'Username / Email',value:e.user,copy:true},{label:'Password',value:e.pw,copy:true,pw:true},...(e.url?[{label:'URL',value:e.url,copy:true}]:[]),...(e.notes?[{label:'Notes',value:e.notes}]:[])];
+  document.getElementById('detBody').innerHTML=fields.map(function(f,i){
+    return '<div style="margin-bottom:12px;"><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">'+esc(f.label)+'</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--btn-radius);padding:8px 12px;">'+
+      '<div style="flex:1;font-family:var(--mono-font);font-size:13px;" id="dfv'+i+'">'+esc(f.pw?'••••••••••':f.value)+'</div>'+
+      (f.copy?'<button class="ex-copy-btn" id="cb'+i+'" onclick="cpField(\''+escA(f.value)+'\',\'cb'+i+'\')">Copy</button>':'')+
+      (f.pw?'<button class="ex-show-btn" onclick="togPw(this,\''+escA(f.value)+'\',\'dfv'+i+'\')">Show</button>':'')+
+      '</div></div>';
+  }).join('');
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function togPw(btn,pw,id){var el=document.getElementById(id);if(btn.textContent==='Show'){el.textContent=pw;btn.textContent='Hide';}else{el.textContent='••••••••••';btn.textContent='Show';}}
+function closeDet(){document.getElementById('detailOverlay').classList.remove('open');detId=null;}
+function editFromDet(){var id=detId;closeDet();openEdit(id);}
+async function delFromDet(){var id=detId;closeDet();openEdit(id);setTimeout(function(){toggleDelConfirm();},300);}
+
+// ══════════════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════════════
+function openSettings(){var m=meta(),s=getSettings();document.getElementById('tog2fa').checked=m.twofa||false;document.getElementById('togAutoLock').checked=s.autolock||false;document.getElementById('togClip').checked=s.clipclear||false;document.getElementById('setEmail').value=m.rEmail||'';document.getElementById('setPhone').value=m.rPhone||'';var exSet=document.getElementById('executorSettings');if(m.executor&&m.executor.active){exSet.style.display='block';document.getElementById('executorDisplay').textContent=m.executor.name+' - '+m.executor.relation+' - '+m.executor.waitHours+'h time-lock';}showTierPill();document.getElementById('settingsOverlay').classList.add('open');}
+function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
+async function toggle2FA(el){var m=meta();if(el.checked){if(!m.totp){var s=genSecret();m.totp=s;var ota='otpauth://totp/VaultKey?secret='+s+'&issuer=VaultKey';alert('Enable 2FA:\n\nOpen your authenticator app → add account → enter secret:\n\n'+s+'\n\nPress OK when added.');}m.twofa=true;saveMeta(m);toast('2FA enabled',true);}else{m.twofa=false;saveMeta(m);toast('2FA disabled');}saveSettings();}
+function saveSettings(){var s={autolock:document.getElementById('togAutoLock').checked,clipclear:document.getElementById('togClip').checked};_ls.setItem(SK+'_settings',JSON.stringify(s));startAutoLock();}
+function getSettings(){return JSON.parse(_ls.getItem(SK+'_settings')||'{}');}
+function loadSettings(){var s=getSettings();['togAutoLock','togClip'].forEach(function(id){var el=document.getElementById(id);if(el)el.checked=s[id.replace('tog','').toLowerCase()]||false;});startAutoLock();}
+function saveRecoveryContacts(){var m=meta();var email=document.getElementById('setEmail').value.trim();var phone=document.getElementById('setPhone').value.trim();if(email)m.rEmail=email;else delete m.rEmail;if(phone)m.rPhone=phone;else delete m.rPhone;saveMeta(m);toast('Recovery contacts saved',true);}
+async function changeMasterPw(){var cur=document.getElementById('setCurPw').value,nw=document.getElementById('setNewPw').value;var err=document.getElementById('setPwErr');if(!cur||!nw){err.textContent='Fill both fields';return;}if(nw.length<8){err.textContent='Min 8 characters';return;}if(cur!==masterPw){err.textContent='Current password incorrect';return;}masterPw=nw;await saveVault();err.textContent='';toast('Password changed',true);document.getElementById('setCurPw').value='';document.getElementById('setNewPw').value='';}
+function confirmWipe(){var c=prompt('This permanently deletes all vault data.\n\nType WIPE to confirm:');if(c==='WIPE'){_ls.clear();location.reload();}}
+
+// ══════════════════════════════════════════════════════════════════
+// SKIN SYSTEM + THEME BACKGROUNDS
+// ══════════════════════════════════════════════════════════════════
+
+
+function setSkin(s){
+  document.documentElement.setAttribute('data-skin',s);
+  _ls.setItem('vk8_skin',s);
+  updateSkinBtns();
+  // Update logo sub-label
+  var sub=document.getElementById('vaultSub');
+  if(sub){var labels={personal:'Personal',legal:'Legal & Financial',military:'Military / Gov'};sub.textContent=labels[s]||s;}
+
+}
+function updateSkinBtns(){
+  var s=document.documentElement.getAttribute('data-skin')||'personal';
+  document.querySelectorAll('.skin-btn').forEach(function(b){
+    var btnSkin=b.textContent.trim().toLowerCase();
+    var match=(btnSkin===s)||(btnSkin==='legal'&&s==='legal')||(btnSkin==='military'&&s==='military')||(btnSkin==='personal'&&s==='personal');
+    b.classList.toggle('active',match);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SETTINGS — SAVE ALL
+// ══════════════════════════════════════════════════════════════════
+function saveAllSettings(){
+  saveSettings();
+  saveRecoveryContacts();
+  toast('Settings saved',true);
+  closeSettings();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EXECUTOR FILE OPEN
+// ══════════════════════════════════════════════════════════════════
+var _exFileData=null;
+function handleExFileSelect(input){
+  var file=input.files[0];
+  if(!file){return;}
+  var nameEl=document.getElementById('exFileNameDisplay');
+  var codeWrap=document.getElementById('exFileCodeWrap');
+  var err=document.getElementById('exFileErr');
+  err.textContent='';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var parsed=JSON.parse(e.target.result);
+      if(!parsed.vaultkey_executor){err.textContent='This does not appear to be a VaultKey Executor Document.';return;}
+      _exFileData=parsed;
+      nameEl.textContent='✓ '+file.name+(parsed.executorName?' — prepared for '+parsed.executorName:'');
+      codeWrap.style.display='block';
+      setTimeout(function(){document.getElementById('exFileCode').focus();},100);
+    }catch(ex){
+      nameEl.textContent='';
+      err.textContent='File could not be read. Make sure it is a valid VaultKey Executor Document.';
+    }
+  };
+  reader.readAsText(file);
+}
+async function openExFile(){
+  var code=document.getElementById('exFileCode').value.trim();
+  var name=document.getElementById('exFileName2').value.trim();
+  var err=document.getElementById('exFileErr');
+  if(!_exFileData){err.textContent='Please select an executor document file first';return;}
+  if(!code){err.textContent='Enter your executor access code';return;}
+  if(!name){err.textContent='Enter your full name';return;}
+  try{
+    var decrypted=await dec(_exFileData.data,code);
+    var payload=JSON.parse(decrypted);
+    if(payload.type!=='vaultkey_executor_document'){err.textContent='File format not recognised';return;}
+    // Load entries from payload
+    entries=payload.estateEntries||[];
+    var privateNames=(payload.privateNames||[]).map(function(p){return {id:uid(),name:p.name,cat:p.cat||'☁️ Other',user:'',pw:'',prv:'private'};});
+    // Merge for display — private entries shown as blocked
+    var allForView=entries.concat(privateNames);
+    window.executorMode=true;
+    // Log this access
+    var logEntry={
+      timestamp:new Date().toISOString(),
+      executorName:name,
+      configuredExecutor:payload.executorConfig?payload.executorConfig.name:'(file)',
+      relation:payload.executorConfig?payload.executorConfig.relation:'',
+      waitHours:0,
+      browserInfo:navigator.userAgent.slice(0,80),
+      source:'executor_file',
+      alarmFired:false,
+    };
+    var log=JSON.parse(_ls.getItem(SK+'_accesslog')||'[]');
+    log.unshift(logEntry);
+    _ls.setItem(SK+'_accesslog',JSON.stringify(log));
+    // Render executor view with file data
+    var fakeConfig=payload.executorConfig||{name:_exFileData.executorName||name,relation:'Executor'};
+    // Temporarily replace entries for renderExecutorView
+    var savedEntries=entries;
+    entries=allForView;
+    renderExecutorView(name,fakeConfig,logEntry);
+    entries=savedEntries;
+    err.textContent='';
+    show('executorScreen');
+    // Update header to show file source
+    var meta2=document.getElementById('exViewMeta');
+    if(meta2)meta2.innerHTML+='<br>Source: <strong>Executor Document File</strong>';
+    var auditEl=document.getElementById('exAuditLine');
+    if(auditEl)auditEl.textContent='File opened: '+new Date().toLocaleString();
+  }catch(ex){
+    err.textContent='Incorrect access code, or the file has been corrupted.';
+  }
+}
+async function exportVault(){var ct=_ls.getItem(SK);if(!ct)return;var blob=new Blob([JSON.stringify({vault:ct,tier:meta().tier,exported:new Date().toISOString()})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='vaultkey-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Encrypted backup downloaded',true);}
+function startAutoLock(){clearInterval(autoLockInt);if(!getSettings().autolock)return;autoLockInt=setInterval(function(){if(Date.now()-lastActivity>15*60*1000){lockVault();toast('Vault locked due to inactivity');}},30000);}
+function cpPw(id){var e=entries.find(function(x){return x.id===id;});if(!e)return;navigator.clipboard.writeText(e.pw);if(getSettings().clipclear)setTimeout(function(){navigator.clipboard.writeText('');},30000);toast('Password copied',true);}
+function cpField(val,btnId){navigator.clipboard.writeText(val);if(getSettings().clipclear)setTimeout(function(){navigator.clipboard.writeText('');},30000);var btn=document.getElementById(btnId);if(btn){btn.textContent='✓';btn.classList.add('done');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},2000);}}
+function updStr(){var pw=document.getElementById('fp').value;_calcStr(pw,'sfill','slbl');}
+function updStr2(){var pw=document.getElementById('spw').value;_calcStr(pw,'sfill2','slbl2');}
+function _calcStr(pw,fillId,lblId){var fill=document.getElementById(fillId),lbl=document.getElementById(lblId);if(!pw){fill.style.width='0%';lbl.textContent='';return;}var s=0;if(pw.length>=8)s++;if(pw.length>=12)s++;if(pw.length>=16)s++;if(/[A-Z]/.test(pw))s++;if(/[a-z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;var l=[{p:'10%',c:'var(--negative)',t:'Very Weak'},{p:'25%',c:'var(--negative)',t:'Weak'},{p:'50%',c:'var(--warning)',t:'Fair'},{p:'75%',c:'var(--positive)',t:'Strong'},{p:'100%',c:'var(--positive)',t:'Very Strong'}][Math.min(Math.floor(s/7*4),4)];fill.style.width=l.p;fill.style.background=l.c;lbl.textContent=l.t;lbl.style.color=l.c;}
+function digKey(e,idx,rowId){
+  var inputs=Array.from(document.querySelectorAll('#'+rowId+' .digit'));
+  var el=inputs[idx];
+  // Allow: Tab, Enter, Delete
+  if(e.key==='Tab'||e.key==='Enter')return;
+  // Backspace: clear current or move back
+  if(e.key==='Backspace'){
+    e.preventDefault();
+    if(el.value){el.value='';}
+    else if(idx>0){inputs[idx-1].value='';inputs[idx-1].focus();inputs[idx-1].select();}
+    return;
+  }
+  // Arrow left: move back
+  if(e.key==='ArrowLeft'){e.preventDefault();if(idx>0){inputs[idx-1].focus();inputs[idx-1].select();}return;}
+  // Arrow right: move forward
+  if(e.key==='ArrowRight'){e.preventDefault();if(idx<inputs.length-1){inputs[idx+1].focus();inputs[idx+1].select();}return;}
+  // Ignore non-digit keys (allow Ctrl+V paste)
+  if(!/^\d$/.test(e.key)&&!(e.ctrlKey||e.metaKey)){e.preventDefault();return;}
+  // Digit: set value, advance, and auto-submit on last digit
+  if(/^\d$/.test(e.key)){
+    e.preventDefault();
+    el.value=e.key;
+    if(idx<inputs.length-1){
+      inputs[idx+1].focus();inputs[idx+1].select();
+    } else {
+      // Last digit entered — auto-submit based on rowId
+      var submitMap={
+        'tfaDigits':function(){verify2FA();},
+        'unlockDigits':function(){tryUnlock();},
+        'emailDigits':function(){doEmailRecovery();},
+        'smsDigits':function(){doSmsRecovery();}
+      };
+      if(submitMap[rowId])setTimeout(submitMap[rowId],80);
+    }
+  }
+}
+// Handle paste into digit rows
+function digPaste(e,rowId){
+  e.preventDefault();
+  var text=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+  var inputs=Array.from(document.querySelectorAll('#'+rowId+' .digit'));
+  text.split('').slice(0,inputs.length).forEach(function(c,i){inputs[i].value=c;});
+  var last=Math.min(text.length,inputs.length-1);
+  inputs[last].focus();
+}
+function digCode(rowId){return Array.from(document.querySelectorAll('#'+rowId+' .digit')).map(function(d){return d.value;}).join('');}
+function digClear(rowId){
+  var inputs=Array.from(document.querySelectorAll('#'+rowId+' .digit'));
+  inputs.forEach(function(d){d.value='';});
+  if(inputs.length)inputs[0].focus();
+}
+// Auto-focus first digit when a digit-row becomes visible
+function digFocus(rowId){
+  var first=document.querySelector('#'+rowId+' .digit');
+  if(first)setTimeout(function(){first.focus();},80);
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escA(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function toast(msg,good){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(good?' green':'');setTimeout(function(){t.className='toast';},2800);}
+function setFSSlider(px){
+  px=Math.max(13,Math.min(32,parseInt(px,10)));
+  document.documentElement.style.fontSize=px+'px';
+  // Sync any slider instances
+  document.querySelectorAll('#fs-slider').forEach(function(sl){sl.value=px;});
+  _ls.setItem('vk8_fontsize',px);
+}
+function toggleLight(){
+  var on=document.body.classList.toggle('light-mode');
+  document.getElementById('lm-btn').textContent=on?'🌙':'☀️';
+  _ls.setItem('vk8_lightmode',on?'1':'0');
+}
+// ══════════════════════════════════════════════════════════════════
+// SUPPORT
+// ══════════════════════════════════════════════════════════════════
+function openSupport(){
+  document.getElementById('supportOverlay').classList.add('open');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FEEDBACK SYSTEM
+// ══════════════════════════════════════════════════════════════════
+var FB_KEY='vk8_feedback';
+
+function openFeedback(){
+  document.getElementById('fbText').value='';
+  document.getElementById('fbEmail').value='';
+  document.getElementById('fbErr').textContent='';
+  document.getElementById('fbCategory').value='bug';
+  document.getElementById('fbCountDisplay').textContent='1000 characters remaining';
+  document.getElementById('feedbackOverlay').classList.add('open');
+  setTimeout(function(){document.getElementById('fbText').focus();},100);
+}
+function closeFeedback(){
+  document.getElementById('feedbackOverlay').classList.remove('open');
+}
+function fbCount(){
+  var len=document.getElementById('fbText').value.length;
+  var rem=1000-len;
+  var el=document.getElementById('fbCountDisplay');
+  el.textContent=rem+' character'+(rem===1?'':'s')+' remaining';
+  el.style.color=rem<100?'var(--negative)':rem<200?'var(--warning)':'var(--muted)';
+}
+function submitFeedback(){
+  var text=document.getElementById('fbText').value.trim();
+  var cat=document.getElementById('fbCategory').value;
+  var email=document.getElementById('fbEmail').value.trim();
+  var err=document.getElementById('fbErr');
+  if(!text||text.length<5){err.textContent='Please enter at least 5 characters of feedback';return;}
+  err.textContent='';
+  var existing=JSON.parse(_ls.getItem(FB_KEY)||'[]');
+  existing.unshift({
+    id:uid(),
+    timestamp:new Date().toISOString(),
+    category:cat,
+    text:text,
+    email:email||null,
+    userAgent:navigator.userAgent.slice(0,120),
+    appVersion:'v9',
+  });
+  _ls.setItem(FB_KEY,JSON.stringify(existing));
+  closeFeedback();
+  toast('✓ Thank you — feedback received',true);
+}
+function openFeedbackReport(){
+  var all=JSON.parse(_ls.getItem(FB_KEY)||'[]');
+  var cats={bug:'🐛 Bug Reports',improvement:'⚡ Improvements',addition:'✨ Feature Requests',ux:'🎨 Design / UX',security:'🔒 Security',general:'💬 General'};
+  var groups={};
+  Object.keys(cats).forEach(function(k){groups[k]=[];});
+  all.forEach(function(f){if(groups[f.category])groups[f.category].push(f);else groups.general.push(f);});
+  var html='<div style="font-size:.82rem;color:var(--muted2);margin-bottom:14px;">'+all.length+' total submissions</div>';
+  Object.keys(cats).forEach(function(cat){
+    var items=groups[cat];
+    if(!items.length)return;
+    html+='<div style="margin-bottom:16px;">';
+    html+='<div style="font-size:.85rem;font-weight:700;color:var(--accent2);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">'+cats[cat]+' <span style="color:var(--muted);font-weight:400;">('+items.length+')</span></div>';
+    items.forEach(function(f){
+      html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--btn-radius);padding:10px 12px;margin-bottom:6px;">';
+      html+='<div style="display:flex;justify-content:space-between;margin-bottom:4px;">';
+      html+='<span style="font-size:.72rem;color:var(--muted);">'+new Date(f.timestamp).toLocaleString()+'</span>';
+      if(f.email)html+='<span style="font-size:.72rem;color:var(--accent);">'+esc(f.email)+'</span>';
+      html+='</div>';
+      html+='<div style="font-size:.85rem;color:var(--text);line-height:1.5;">'+esc(f.text)+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+  if(!all.length)html='<div class="infobox" style="text-align:center;padding:24px;">No feedback submitted yet.</div>';
+  document.getElementById('feedbackReportBody').innerHTML=html;
+  document.getElementById('feedbackReportOverlay').classList.add('open');
+}
+function exportFeedbackCSV(){
+  var all=JSON.parse(_ls.getItem(FB_KEY)||'[]');
+  if(!all.length){toast('No feedback to export');return;}
+  var csv='Timestamp,Category,Email,Text,Version\n';
+  all.forEach(function(f){
+    csv+='"'+f.timestamp+'","'+f.category+'","'+(f.email||'')+'","'+f.text.replace(/"/g,'""')+'","'+f.appVersion+'"\n';
+  });
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='VaultKey-Feedback-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('✓ Feedback exported',true);
+}
+function clearFeedback(){
+  if(!confirm('Delete all '+JSON.parse(_ls.getItem(FB_KEY)||'[]').length+' feedback submissions? This cannot be undone.'))return;
+  _ls.removeItem(FB_KEY);
+  document.getElementById('feedbackReportOverlay').classList.remove('open');
+  toast('Feedback cleared');
+}
+// PWA INSTALL
+var _vkInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  _vkInstallPrompt = e;
+  var btn = document.getElementById('pwaInstallBtn');
+  if (btn) btn.style.display = 'flex';
+});
+window.addEventListener('appinstalled', function() {
+  _vkInstallPrompt = null;
+  var btn = document.getElementById('pwaInstallBtn');
+  if (btn) btn.style.display = 'none';
+});
+function triggerPWAInstall() {
+  if (!_vkInstallPrompt) {
+    alert('To install VaultKey as an app:\n\nAndroid Chrome: tap menu (\u22ee) \u2192 "Add to Home Screen"\niOS Safari: tap Share (\u25a1\u2191) \u2192 "Add to Home Screen"');
+    return;
+  }
+  _vkInstallPrompt.prompt();
+  _vkInstallPrompt.userChoice.then(function() {
+    _vkInstallPrompt = null;
+    var btn = document.getElementById('pwaInstallBtn');
+    if (btn) btn.style.display = 'none';
+  });
+}
+
+// PWA SERVICE WORKER (blob URL - works on file:// and https://)
+(function() {
+  if (!('serviceWorker' in navigator)) return;
+  var swScript = [
+    '"use strict";',
+    'var CACHE="vaultkey-v12";',
+    'self.addEventListener("install",function(e){self.skipWaiting();});',
+    'self.addEventListener("activate",function(e){',
+    '  e.waitUntil(caches.keys().then(function(keys){',
+    '    return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));',
+    '  }));',
+    '  self.clients.claim();',
+    '});',
+    'self.addEventListener("fetch",function(e){',
+    '  e.respondWith(fetch(e.request).catch(function(){return caches.match(e.request);}));',
+    '});'
+  ].join('\n');
+  try {
+    var blob = new Blob([swScript], {type: 'application/javascript'});
+    var swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl, {scope: './'})
+      .then(function(reg) { console.log('VaultKey SW registered'); })
+      .catch(function(err) { console.log('VaultKey SW skipped:', err.message); });
+  } catch(ex) { /* blob SW not supported - fine */ }
+})();
+
+</script>
+</body>
+</html>
