@@ -605,6 +605,15 @@ body.light-mode .vhdr{background:rgba(240,244,248,.98);height:64px;}
 }
 
 /* ── TOAST ── */
+.sim-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;}
+.sim-modal{background:var(--surface);border-radius:12px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.sim-header{padding:12px 16px;display:flex;align-items:center;gap:10px;}
+.sim-badge{font-size:10px;padding:2px 8px;border-radius:20px;margin-left:auto;white-space:nowrap;opacity:.85;}
+.sim-body{padding:16px;}
+.sim-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;}
+.sim-value{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:10px;}
+.sim-message{font-size:13px;color:var(--text);line-height:1.7;background:var(--bg);border-radius:6px;padding:12px;border:1px solid var(--border);}
+.sim-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
 .toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
   background:var(--surface);border:1px solid var(--border2);
@@ -876,7 +885,28 @@ body {
 <script>
 // Show something immediately — don't wait for IDB
 // _vkInit will call show() again with the correct screen once IDB responds
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('storage',function(e){
+  if(e.key===SK+'_lockInitiated'&&e.newValue&&!e.oldValue&&window._vkUnlocked){
+    var execName=localStorage.getItem(SK+'_lockName')||'Unknown';
+    var waitMs=parseInt(localStorage.getItem(SK+'_lockWaitMs')||'86400000',10);
+    var unlockAt=new Date(parseInt(e.newValue,10)+waitMs);
+    checkVaultAlarm();
+    simNotify({type:'owner',to:'Vault Owner',toEmail:'',
+      subject:'LIVE ALERT: Executor Access Just Initiated',
+      lines:['<strong>&#9888; Someone just entered your executor access code.</strong>','',
+        '<strong>Executor:</strong> '+esc(execName),
+        '<strong>Access granted at:</strong> '+unlockAt.toLocaleString(),'',
+        'Use the <em>Cancel Executor Access</em> button in the banner above to block this.','',
+        '<em>Real-time alert &mdash; this is happening right now.</em>']
+    });
+  }
+  if(e.key===SK+'_lockInitiated'&&!e.newValue&&e.oldValue&&window._vkUnlocked){
+    var b=document.getElementById('vaultAlarmBanner');
+    if(b)b.classList.remove('show');
+    toast('Executor access cancelled',true);
+  }
+});
+addEventListener('DOMContentLoaded',function(){
   // If _vkInit hasn't shown a screen within 1.2s, force tierScreen visible
   setTimeout(function(){
     var anyActive=document.querySelector('.screen.active');
@@ -1077,6 +1107,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <div class="brand-tagline">Enter your credentials to continue</div>
   </div>
 
+  <div id="lockExecutorNotice" style="display:none;background:rgba(232,93,36,.08);border:1px solid rgba(232,93,36,.35);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--warning);text-align:center;">&#9888;&nbsp;<span id="lockNoticeText">Executor access request is pending &mdash; log in to review or cancel</span></div>
   <div class="ltabs">
     <button class="ltab active" id="ltPw" onclick="ltab('pw')">Password</button>
     <button class="ltab" id="ltRec" onclick="ltab('rec')">Recovery</button>
@@ -1243,6 +1274,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
         <button class="btn secondary" style="width:auto;padding:6px 14px;" onclick="openAccessLog()">View Access Log</button>
         <button class="btn danger" style="width:auto;padding:6px 14px;" onclick="cancelExecutorAccess()">Cancel Executor Access</button>
+        <button class="btn gold" style="width:auto;padding:6px 14px;" onclick="allowExecutorAccessNow()">Allow Now (Demo)</button>
       </div>
     </div>
   </div>
@@ -1770,7 +1802,11 @@ function _vkInit(){
         document.getElementById('lockTitle').textContent='VaultKey';
         checkAlarm();
         show('lockScreen');
-        if(_ls.getItem(SK+'_lockInitiated')){setTimeout(function(){ltab('ex');showCountdown();},200);}
+        if(_ls.getItem(SK+'_lockInitiated')){
+          var ni=document.getElementById('lockExecutorNotice');
+          if(ni){var wms=parseInt(_ls.getItem(SK+'_lockWaitMs')||'86400000',10),ini=parseInt(_ls.getItem(SK+'_lockInitiated')||'0',10);if(wms-(Date.now()-ini)>0)ni.style.display='block';}
+          setTimeout(function(){ltab('ex');showCountdown();},200);
+        }
       }
     };
   });
@@ -2025,7 +2061,7 @@ async function tryUnlock(){
     try{var pt=await dec(ct,pw);entries=JSON.parse(pt);}
     catch(e){err.textContent='Decryption failed — incorrect password?';return;}
   }
-  masterPw=pw;err.textContent='';loadSettings();showTierPill();show('vaultScreen');renderAll();checkVaultAlarm();
+  masterPw=pw;window._vkUnlocked=true;err.textContent='';loadSettings();showTierPill();show('vaultScreen');renderAll();checkVaultAlarm();
 }
 
 async function tryExecutorUnlock(){
@@ -2102,41 +2138,74 @@ async function tryExecutorUnlock(){
   err.textContent='';
   var cb=document.getElementById('countdownBanner');
   if(cb)cb.style.display='none';
-  renderExecutorView(name,m.executor,logEntry);
-  show('executorScreen');
+  simNotify({
+    type:'executor',to:name,toEmail:(m.executor.email||'executor@vaultkey.com'),
+    subject:'VaultKey: Executor Access Granted',
+    lines:[
+      '<strong>Your executor access has been granted.</strong>','',
+      '<strong>Vault owner:</strong> '+(m.hint||'Vault Owner'),
+      '<strong>Access granted:</strong> '+new Date().toLocaleString(),'',
+      '<strong>You now have access to:</strong>',
+      '- All Estate-tier entries with full credentials',
+      '- Private-tier entry names (credentials withheld by owner)',
+      '- RUFADAA-compliant executor access document',
+      '- Complete access audit log for legal proceedings','',
+      '<em>Please act in accordance with your fiduciary obligations under RUFADAA.</em>'
+    ]
+  },function(){
+    renderExecutorView(name,m.executor,logEntry);
+    show('executorScreen');
+  });
 }
 
+function simNotify(opts,onDismiss){
+  var colors={owner:'#e8a830',executor:'#4caf8a',cancel:'#e85d24'};
+  var labels={owner:'OWNER ALERT',executor:'EXECUTOR NOTIFICATION',cancel:'CANCELLATION NOTICE'};
+  var col=colors[opts.type]||'var(--accent)';
+  var lbl=labels[opts.type]||'NOTIFICATION';
+  var linesHtml=opts.lines.map(function(l){return l?'<div style="margin-bottom:4px;">'+l+'</div>':'<div style="margin-bottom:6px;"></div>';}).join('');
+  var actBtn=opts.actionLabel?'<button class="btn secondary" style="width:auto;padding:8px 16px;" id="simAct">'+opts.actionLabel+'</button>':'';
+  var ov=document.createElement('div');
+  ov.className='sim-overlay';
+  ov.innerHTML='<div class="sim-modal">'
+    +'<div class="sim-header" style="background:'+col+';color:#fff;">'
+    +'<span style="font-size:18px;margin-right:4px;">&#9993;</span>'
+    +'<span style="font-size:12px;font-weight:700;letter-spacing:.05em;">'+lbl+'</span>'
+    +'<span class="sim-badge" style="background:rgba(0,0,0,.25);color:#fff;">SIMULATED &mdash; demo mode</span>'
+    +'</div>'
+    +'<div class="sim-body">'
+    +'<div class="sim-label">To</div><div class="sim-value">'+opts.to+' &lt;'+opts.toEmail+'&gt;</div>'
+    +'<div class="sim-label">Subject</div><div class="sim-value">'+opts.subject+'</div>'
+    +'<hr style="border:none;border-top:1px solid var(--border);margin:10px 0;">'
+    +'<div class="sim-message">'+linesHtml+'</div>'
+    +'</div>'
+    +'<div class="sim-footer">'+actBtn
+    +'<button class="btn gold" style="width:auto;padding:8px 20px;" id="simDis">OK &mdash; Understood</button>'
+    +'</div></div>';
+  document.body.appendChild(ov);
+  ov.querySelector('#simDis').onclick=function(){document.body.removeChild(ov);if(onDismiss)onDismiss();};
+  var sa=ov.querySelector('#simAct');
+  if(sa&&opts.actionFn)sa.onclick=function(){document.body.removeChild(ov);opts.actionFn();};
+}
 function sendOwnerAlert(executorName,executorConfig){
   var m=meta();
   var waitHours=executorConfig?executorConfig.waitHours||24:24;
-  var subject=encodeURIComponent('VaultKey Alert: Executor Access Initiated');
   var unlockTime=new Date(Date.now()+waitHours*3600000);
-  var body=encodeURIComponent(
-    'SECURITY ALERT - VaultKey Executor Access\n\n'+
-    'Someone has entered your executor access code and initiated a time-lock request.\n\n'+
-    'Executor name entered: '+executorName+'\n'+
-    'Configured executor: '+(executorConfig?executorConfig.name:'Unknown')+'\n'+
-    'Access will be granted: '+unlockTime.toLocaleString()+'\n'+
-    'Time-lock duration: '+waitHours+' hours\n\n'+
-    'If you are alive and able to act:\n'+
-    '1. Open your VaultKey vault immediately\n'+
-    '2. Log in with your master password\n'+
-    '3. Click "Cancel Executor Access" in the alert banner\n\n'+
-    'If you do not cancel within '+waitHours+' hours, the executor will gain access to your estate entries.\n\n'+
-    'This alert was generated by VaultKey on '+new Date().toLocaleString()+'.'
-  );
-  // Primary: open mailto in owner's email client (works offline)
-  var rEmail=m.rEmail||'';
-  if(rEmail){
-    var link=document.createElement('a');
-    link.href='mailto:'+rEmail+'?subject='+subject+'&body='+body;
-    link.style.display='none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-  // Also show an in-app alert so owner knows notification was sent
-  toast('Owner alerted: executor access initiated',true);
+  simNotify({
+    type:'owner',to:(m.hint||'Vault Owner'),toEmail:(m.rEmail||'owner@vaultkey.com'),
+    subject:'SECURITY ALERT: Executor Access Initiated',
+    lines:[
+      '<strong>Someone has entered your executor access code.</strong>','',
+      '<strong>Executor name:</strong> '+executorName,
+      '<strong>Access granted at:</strong> '+unlockTime.toLocaleString(),
+      '<strong>Time-lock:</strong> '+waitHours+' hours','',
+      '<strong>If you are alive and able to act:</strong>',
+      '1. Open your VaultKey vault immediately',
+      '2. Log in with your master password',
+      '3. Tap Cancel Executor Access in the alert banner','',
+      'If you do not cancel, your executor will gain access to your digital estate in '+waitHours+' hours.'
+    ]
+  });
 }
 function showCountdown(){
   var pending=_ls.getItem(SK+'_lockInitiated');
@@ -2378,6 +2447,30 @@ function checkVaultAlarm(){
       '<strong>'+esc(last.executorName)+'</strong> &middot; '+new Date(last.timestamp).toLocaleString()+' &middot; Authorised: <strong>'+esc(last.configuredExecutor)+'</strong>';
   }
 }
+function allowExecutorAccessNow(){
+  if(!confirm('DEMO: Skip the time-lock countdown and grant executor access now?'))return;
+  var waitMs=parseInt(_ls.getItem(SK+'_lockWaitMs')||'86400000',10);
+  _ls.setItem(SK+'_lockInitiated',String(Date.now()-waitMs-1000));
+  var m=meta();
+  var execName=_ls.getItem(SK+'_lockName')||m.executor.name||'Executor';
+  simNotify({
+    type:'executor',to:execName,toEmail:(m.executor.email||'executor@vaultkey.com'),
+    subject:'VaultKey: Access Approved - Time-lock waived by owner',
+    lines:[
+      '<strong>The vault owner has approved your access request.</strong>','',
+      'You may now enter your executor access code to gain immediate access.','',
+      '<strong>You will receive:</strong>',
+      '- Estate entries with full credentials',
+      '- Private entries (names only)',
+      '- RUFADAA-compliant executor access document',
+      '- Complete audit log','',
+      '<em>Sealed entries have been permanently deleted per the owner instructions.</em>'
+    ]
+  });
+  var b=document.getElementById('vaultAlarmBanner');
+  if(b)b.classList.remove('show');
+  toast('Executor access approved',true);
+}
 function cancelExecutorAccess(){
   if(!confirm('Cancel the pending executor access request?\n\nThe executor cannot access the vault until they enter the code again.'))return;
   _ls.removeItem(SK+'_lockInitiated');
@@ -2400,7 +2493,18 @@ function cancelExecutorAccess(){
   _ls.setItem(SK+'_accesslog',JSON.stringify(log));
   var b=document.getElementById('vaultAlarmBanner');
   if(b)b.classList.remove('show');
-  toast('Executor access request cancelled',true);
+  var m2=meta();
+  simNotify({
+    type:'cancel',to:(m2.executor?m2.executor.name:'Executor'),
+    toEmail:(m2.executor?(m2.executor.email||'executor@vaultkey.com'):'executor@vaultkey.com'),
+    subject:'VaultKey: Executor Access Request Cancelled',
+    lines:[
+      'Your executor access request has been <strong>cancelled by the vault owner</strong>.','',
+      'The vault owner is alive and able to manage their vault.','',
+      'If you believe this is an error, please contact the vault owner directly.','',
+      '<em>No vault data was accessed. This event has been recorded in the audit log.</em>'
+    ]
+  });
 }
 function dismissAlarm(){
   _ls.removeItem(SK+'_alarmPending');
@@ -2448,7 +2552,7 @@ async function doSmsRecovery(){var code=digCode('smsDigits');var nw=document.get
 // VAULT OPERATIONS
 // ══════════════════════════════════════════════════════════════════
 async function saveVault(){_ls.setItem(SK,await enc(JSON.stringify(entries),masterPw));}
-function lockVault(){masterPw='';entries=[];window.executorMode=false;show('lockScreen');document.getElementById('mpInput').value='';document.getElementById('mpErr').textContent='';digClear('unlockDigits');document.getElementById('tfa-unlock').style.display='none';}
+function lockVault(){masterPw='';entries=[];window.executorMode=false;window._vkUnlocked=false;show('lockScreen');document.getElementById('mpInput').value='';document.getElementById('mpErr').textContent='';digClear('unlockDigits');document.getElementById('tfa-unlock').style.display='none';}
 function showTierPill(){var m=meta(),p=document.getElementById('tierPill'),pd=document.getElementById('planDisplay');if(p)p.textContent=(m.tier||'basic').toUpperCase();if(pd)pd.textContent=(m.tier||'basic').toUpperCase();}
 function renderAll(){renderStats();renderCats();renderEntries();}
 function renderStats(){
