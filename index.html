@@ -269,7 +269,7 @@ body.light-mode .vhdr{background:rgba(240,244,248,.98);height:64px;}
 .hdrbtn{
   padding:8px 13px;background:transparent;
   border:1px solid var(--border2);border-radius:var(--btn-radius);
-  color:var(--muted2);font-family:var(--body-font);font-size:12px;
+  color:var(--text);font-family:var(--body-font);font-size:12px;
   cursor:pointer;white-space:nowrap;transition:all .2s;
   line-height:1;flex-shrink:0;height:34px;display:flex;align-items:center;
 }
@@ -404,6 +404,20 @@ body.light-mode .vhdr{background:rgba(240,244,248,.98);height:64px;}
 .ex-card-cat{font-size:11px;color:var(--muted);margin-left:auto;}
 .ex-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:560px){.ex-fields{grid-template-columns:1fr;}}
+@media(max-width:700px){
+  .vhdr{padding:0 10px;gap:5px;min-height:54px;}
+  #mobileMenuBtn{display:flex !important;}
+  .vsearch{min-width:60px;max-width:120px;font-size:12px;}
+  .skin-switcher{display:none !important;}
+  .vlogo-sub{display:none;}
+  .hdrbtn-hide-mobile{display:none !important;}
+  .hdrbtn{padding:5px 8px;font-size:11px;height:30px;}
+  .vlogo-text{font-size:16px;}
+}
+@media(max-width:480px){
+  .vsearch{display:none;}
+  .card{padding:20px 16px;border-radius:12px;}
+}
 .ex-field{background:var(--surface2);border:1px solid var(--border);border-radius:var(--btn-radius);padding:10px 12px;}
 .ex-field-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
 .ex-field-val{font-size:13px;color:var(--text);word-break:break-all;font-family:var(--mono-font);}
@@ -605,6 +619,24 @@ body.light-mode .vhdr{background:rgba(240,244,248,.98);height:64px;}
 }
 
 /* ── TOAST ── */
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:700px){
+  body{align-items:flex-start;padding:0;}
+  .card{max-width:100% !important;border-radius:0 !important;border-left:none !important;border-right:none !important;min-height:100vh;padding:20px 16px;}
+  .screen{min-height:100vh;}
+  .finput{font-size:16px !important;}
+  .btn{font-size:15px;padding:14px;}
+  .ltab{font-size:12px;padding:8px 10px;}
+  .entry-card,.ecard{width:100% !important;}
+  .overlay-panel{max-width:100% !important;border-radius:12px 12px 0 0 !important;position:fixed;bottom:0;left:0;right:0;top:auto !important;max-height:90vh;overflow-y:auto;}
+  .settingsOverlay .overlay-panel,#settingsOverlay .overlay-panel{top:0 !important;bottom:0 !important;border-radius:0 !important;max-height:100vh !important;}
+  .digit{width:38px !important;height:44px !important;font-size:18px !important;}
+  .brand-name,.brand-lockup .brand-name{font-size:26px !important;}
+  .tier-grid{grid-template-columns:1fr 1fr !important;}
+  .sim-modal{max-width:100% !important;border-radius:12px 12px 0 0 !important;position:fixed;bottom:0;left:0;right:0;}
+}
+
 .sim-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;}
 .sim-modal{background:var(--surface);border-radius:12px;max-width:420px;width:100%;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.4);}
 .sim-header{padding:12px 16px;display:flex;align-items:center;gap:10px;}
@@ -1073,13 +1105,18 @@ addEventListener('DOMContentLoaded',function(){
   <!-- Step 4: 2FA -->
   <div id="s4" style="display:none">
     <div class="infobox">Optional: add a second factor so that even if someone learns your master password, they cannot unlock your vault without your authenticator app.</div>
-    <div style="text-align:center;padding:16px 0;">
+    <div style="text-align:center;padding:12px 0;">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Scan with your authenticator app:</div>
       <canvas id="qrCanvas" style="display:none;margin:0 auto;image-rendering:pixelated;"></canvas>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;">Or enter this secret in your authenticator app:</div>
-      <div id="secretDisplay" style="font-family:var(--mono-font);font-size:13px;color:var(--gold);letter-spacing:.1em;margin-top:6px;word-break:break-all;"></div>
-      <button class="btn secondary" onclick="copySecret()" style="margin-top:8px;">Copy Secret</button>
+      <div style="font-size:12px;color:var(--muted);margin-top:12px;padding:0 8px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);padding:10px;">
+        &#128242; <strong>On this phone?</strong> Tap <em>Copy Secret Key</em> below, then in your authenticator app choose <em>Enter setup key manually</em>.
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;">Your secret key:</div>
+      <div id="secretDisplay" style="font-family:var(--mono-font);font-size:15px;color:var(--gold);letter-spacing:.1em;margin-top:6px;word-break:break-all;padding:10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);"></div>
+      <button class="btn gold" onclick="copySecret()" style="margin-top:10px;width:100%;">&#128203; Copy Secret Key</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">Paste into Microsoft Authenticator or Google Authenticator &rarr; Enter setup key</div>
     </div>
-    <div class="infobox warn">Open your authenticator app, scan the QR code or enter the secret, then enter the 6-digit code below to verify.</div>
+    <div class="infobox warn">After adding the key to your authenticator app, enter the 6-digit code below to verify.</div>
     <label class="flabel">Verify 6-digit code</label>
     <div class="digit-row" id="tfaDigits" onpaste="digPaste(event,'tfaDigits')">
       <input class="digit" maxlength="1" inputmode="numeric" onkeydown="digKey(event,0,'tfaDigits')" onclick="this.select()">
@@ -1118,7 +1155,7 @@ addEventListener('DOMContentLoaded',function(){
   <!-- Password panel -->
   <div id="lPwPanel">
     <label class="flabel">Master Password</label>
-    <input class="finput" type="password" id="mpInput" placeholder="Master password" onkeydown="if(event.key==='Enter')tryUnlock()">
+    <div style="position:relative;"><input class="finput" type="password" id="mpInput" placeholder="Master password" onkeydown="if(event.key==='Enter')tryUnlock()" style="padding-right:42px;width:100%;"><button type="button" onclick="var i=document.getElementById('mpInput');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'&#128065;':'&#128584;';" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;color:var(--muted2);" title="Show password">&#128065;</button></div>
     <div id="tfa-unlock" style="display:none;">
       <label class="flabel">Authenticator Code</label>
       <div class="digit-row" id="unlockDigits" onpaste="digPaste(event,'unlockDigits')">
@@ -1250,12 +1287,13 @@ addEventListener('DOMContentLoaded',function(){
       </div>
       <button class="hdrbtn accent" onclick="openAdd()">+ Add</button>
       <button class="hdrbtn gold" onclick="openExportExecutor()">Executor Export</button>
-      <button class="hdrbtn" onclick="openSettings()">Settings</button>
-      <button class="hdrbtn" onclick="exportVault()">Backup</button>
+      <button class="hdrbtn hdrbtn-hide-mobile" onclick="openSettings()">Settings</button>
+      <button class="hdrbtn hdrbtn-hide-mobile" onclick="exportVault()">Backup</button>
       <button class="hdrbtn" onclick="openSupport()" title="Customer Support">💬 Support</button>
       <button class="hdrbtn" onclick="openFeedback()" title="Send Feedback">✉ Feedback</button>
       <button class="hdrbtn" id="pwaInstallBtn" onclick="triggerPWAInstall()" title="Install VaultKey on this device" style="display:none;border-color:var(--positive);color:var(--positive);">&#8659; Install App</button>
       <button class="hdrbtn" onclick="lockVault()">Lock</button>
+      <button class="hdrbtn" id="mobileMenuBtn" style="display:none;" onclick="openSettings()" title="Settings">&#9881;</button>
       <div class="a11y-bar">
         <span class="ab-a-sm">A</span>
         <input type="range" id="fs-slider" min="13" max="32" step="1" value="15"
@@ -1545,6 +1583,7 @@ addEventListener('DOMContentLoaded',function(){
     <button class="btn secondary" onclick="exportVault();closeSettings()">Download Encrypted Backup</button>
     <button class="btn secondary" style="margin-top:6px;" onclick="closeSettings();openFeedbackReport()">📊 View Feedback Report</button>
     <button class="btn danger" style="margin-top:6px;" onclick="confirmWipe()">Wipe All Vault Data</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center;">Removes all data from this device only</div>
   </div>
   <div class="infobox" style="margin-top:12px;font-size:12px;">🔒 AES-256-GCM encryption · Everything runs offline · Nothing is transmitted to any server</div>
   <div class="macts" style="position:sticky;bottom:0;background:var(--bg2);padding:12px 0 0;margin-top:16px;border-top:1px solid var(--border);">
