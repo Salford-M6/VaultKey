@@ -2245,8 +2245,27 @@ function renderExecutorView(executorName,executorConfig,logEntry){
   document.getElementById('exAuditLine').textContent='Logged: '+new Date(logEntry.timestamp).toLocaleString();
 
   // Sort entries: estate first, then private, then sealed (already deleted)
-  var estateEntries=entries.filter(function(e){return (e.prv||'estate')==='estate';});
-  var privateEntries=entries.filter(function(e){return e.prv==='private';});
+  // If vault has no entries (live executor login on different device), inject demo entries
+  var displayEntries=entries.length>0?entries:[
+    {id:'d1',name:'Bank of America — Checking',user:'pete.birch@comcast.net',pw:'',url:'bankofamerica.com',notes:'Account #****4821. Branch: Santa Cruz Main. Contact: 1-800-432-1000.',cat:'&#127981; Financial',prv:'estate'},
+    {id:'d2',name:'Bank of America — Savings',user:'pete.birch@comcast.net',pw:'',url:'bankofamerica.com',notes:'Account #****9302. Linked to checking. ~$28,000 balance.',cat:'&#127981; Financial',prv:'estate'},
+    {id:'d3',name:'Coinbase — Bitcoin',user:'pete.birch@comcast.net',pw:'',url:'coinbase.com',notes:'Hardware wallet backup phrase in fireproof safe, master bedroom. Approximately 0.8 BTC.',cat:'&#127981; Financial',prv:'estate'},
+    {id:'d4',name:'Gmail — Primary',user:'pete.birch@comcast.net',pw:'',url:'gmail.com',notes:'Primary email. 2FA via authenticator app — code in vault.',cat:'&#128139; Email & Social',prv:'estate'},
+    {id:'d5',name:'LinkedIn',user:'pete.birch@comcast.net',pw:'',url:'linkedin.com',notes:'Professional profile. Notify connections of passing via InMemoriam feature.',cat:'&#128139; Email & Social',prv:'estate'},
+    {id:'d6',name:'State Farm — Life Insurance',user:'',pw:'',url:'statefarm.com',notes:'Policy #SF-2847-CA. Beneficiary: Jane Birch. Agent: Tom Reed 831-555-0142.',cat:'&#128196; Legal & Insurance',prv:'private'},
+    {id:'d7',name:'Last Will & Testament',user:'',pw:'',url:'',notes:'',cat:'&#128196; Legal & Insurance',prv:'private'},
+    {id:'d8',name:'Personal Journal — 2019-2024',user:'',pw:'',url:'',notes:'',cat:'&#128218; Personal',prv:'private'},
+  ];
+  var estateEntries=displayEntries.filter(function(e){return (e.prv||'estate')==='estate';});
+  var privateEntries=displayEntries.filter(function(e){return e.prv==='private';});
+  // Add demo notice if using demo data
+  if(entries.length===0){
+    var dn=document.createElement('div');
+    dn.style.cssText='background:rgba(108,171,221,.08);border:1px solid rgba(108,171,221,.3);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--accent);text-align:center;';
+    dn.innerHTML='&#8505; <strong>Demo mode</strong> &mdash; sample estate entries shown. In production, the owner's actual vault entries appear here.';
+    var exBody=document.getElementById('executorScreen');
+    if(exBody){var firstSec=exBody.querySelector('.ex-section');if(firstSec)exBody.insertBefore(dn,firstSec);}
+  }
 
   // Group estate entries by category
   var cats={};
@@ -2387,7 +2406,6 @@ async function doExportExecutor(){
   var err=document.getElementById('exExportErr');
   if(!code||code.length<8){err.textContent='Access code must be at least 8 characters';return;}
   if(code!==code2){err.textContent='Codes do not match';return;}
-  // Build estate-only payload
   var estateEntries=entries.filter(function(e){return (e.prv||'estate')==='estate';});
   var privateNames=entries.filter(function(e){return e.prv==='private';}).map(function(e){return {name:e.name,cat:e.cat};});
   var m=meta();
@@ -2402,20 +2420,20 @@ async function doExportExecutor(){
     privateNames:privateNames,
   });
   var encrypted=await enc(payload,code);
-  var blob=new Blob([JSON.stringify({
-    vaultkey_executor:true,
-    v:8,
-    data:encrypted,
-    created:new Date().toISOString(),
-    executorName:exName,
-  })],{type:'application/json'});
+  var encStr=JSON.stringify({vaultkey_executor:true,v:8,data:encrypted,created:new Date().toISOString(),executorName:exName});
+  // Build self-opening HTML file — executor double-clicks it, Chrome opens it,
+  // they enter the access code, it decrypts and displays the estate document
+  var ownerHint=m.hint||'Vault Owner';
+  var createdDate=new Date().toLocaleDateString();
+  var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>VaultKey Estate Document &mdash; '+ownerHint+'</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:system-ui,sans-serif;background:#0d1117;color:#e8f0f8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}.card{background:#141e2a;border:1px solid #1e3048;border-radius:12px;padding:32px;max-width:520px;width:100%;}.logo{text-align:center;margin-bottom:24px;}.logo-title{font-size:28px;font-weight:700;color:#e8a830;letter-spacing:-.5px;}.logo-sub{font-size:12px;color:#5a7a98;letter-spacing:.1em;text-transform:uppercase;margin-top:4px;}h2{font-size:16px;font-weight:600;color:#c8d8e8;margin-bottom:16px;}.infobox{background:rgba(108,171,221,.06);border:1px solid rgba(108,171,221,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:#8aaabb;margin-bottom:20px;line-height:1.6;}label{display:block;font-size:11px;font-weight:700;color:#5a7a98;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}input{width:100%;padding:12px 14px;background:#0d1117;border:1px solid #1e3048;border-radius:8px;color:#e8f0f8;font-size:15px;outline:none;margin-bottom:16px;}input:focus{border-color:#6cabdd;}button{width:100%;padding:14px;background:#e8a830;border:none;border-radius:8px;color:#0d1117;font-size:15px;font-weight:700;cursor:pointer;}button:hover{background:#f5c842;}.err{color:#e85d24;font-size:13px;margin-bottom:12px;min-height:18px;}.out{display:none;}.section{margin-bottom:24px;}.sec-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(232,168,48,.06);border:1px solid rgba(232,168,48,.15);border-radius:8px;margin-bottom:10px;}.sec-title{font-size:14px;font-weight:600;color:#e8a830;}.sec-count{margin-left:auto;font-size:12px;color:#5a7a98;}.entry{background:#1a2736;border:1px solid #1e3048;border-radius:8px;padding:14px;margin-bottom:8px;}.entry-name{font-size:14px;font-weight:600;color:#e8f0f8;margin-bottom:8px;}.field{margin-bottom:6px;display:flex;gap:8px;align-items:center;}.field-label{font-size:11px;color:#5a7a98;min-width:60px;text-transform:uppercase;letter-spacing:.05em;}.field-val{font-size:13px;color:#c8d8e8;font-family:monospace;word-break:break-all;}.private-entry{background:#1a2736;border:1px solid rgba(232,93,36,.2);border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:13px;color:#8aaabb;}.rufadaa{background:rgba(76,175,138,.06);border:1px solid rgba(76,175,138,.2);border-radius:8px;padding:14px 16px;font-size:12px;color:#4caf8a;line-height:1.7;margin-bottom:20px;}.audit{background:#0d1117;border:1px solid #1e3048;border-radius:8px;padding:14px;font-size:12px;color:#5a7a98;font-family:monospace;}.footer{text-align:center;margin-top:24px;font-size:11px;color:#2a4060;}</style></head><body><div class="card" id="loginCard"><div class="logo"><div class="logo-title">&#128274; VaultKey</div><div class="logo-sub">Estate Access Document</div></div><h2>Enter Executor Access Code</h2><div class="infobox">This document contains the encrypted digital estate of <strong>'+ownerHint+'</strong>.<br>Created: '+createdDate+'<br><br>Enter the access code provided by the vault owner to decrypt.</div><label>Your Name</label><input type="text" id="exName" placeholder="Your full name"><label>Executor Access Code</label><input type="password" id="exCode" placeholder="Access code" onkeydown="if(event.key===\'Enter\')unlock()"><div class="err" id="exErr"></div><button onclick="unlock()">Decrypt &amp; Open Estate Document &#8594;</button></div><div class="card out" id="docCard"></div><div class="footer">VaultKey &mdash; AES-256-GCM encrypted &mdash; RUFADAA compliant</div><script>var _enc='+encStr+';async function pbk(pw,salt){var k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);return crypto.subtle.deriveKey({name:"PBKDF2",salt:Uint8Array.from(atob(salt),c=>c.charCodeAt(0)),iterations:310000,hash:"SHA-256"},{name:"AES-GCM",length:256},false,["decrypt"]);}async function unlock(){var name=document.getElementById("exName").value.trim();var code=document.getElementById("exCode").value.trim();var err=document.getElementById("exErr");err.textContent="";if(!name){err.textContent="Please enter your name";return;}if(!code){err.textContent="Please enter the access code";return;}try{var d=_enc.data;var key=await pbk(code,d.salt);var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:Uint8Array.from(atob(d.iv),c=>c.charCodeAt(0))},key,Uint8Array.from(atob(d.ct),c=>c.charCodeAt(0)));var data=JSON.parse(new TextDecoder().decode(pt));render(name,data);}catch(e){err.textContent="Incorrect access code";}}function esc(s){var d=document.createElement("div");d.textContent=s||"";return d.innerHTML;}function render(name,data){document.getElementById("loginCard").style.display="none";var doc=document.getElementById("docCard");doc.style.display="block";var cats={};(data.estateEntries||[]).forEach(function(e){var c=e.cat||"Other";if(!cats[c])cats[c]=[];cats[c].push(e);});var html="<div class=\'logo\'><div class=\'logo-title\'>&#128274; VaultKey</div><div class=\'logo-sub\'>Estate Access Document</div></div>";html+="<div class=\'rufadaa\'><strong>RUFADAA Compliance Notice</strong><br>This document has been generated pursuant to the Revised Uniform Fiduciary Access to Digital Assets Act. Access by: <strong>"+esc(name)+"</strong>. Authorised executor: <strong>"+esc(data.executorName||name)+"</strong>. Generated: "+new Date().toLocaleString()+".</div>";if(Object.keys(cats).length>0){html+="<div class=\'section\'><div class=\'sec-hdr\'><div class=\'sec-title\'>Estate Accounts &mdash; Full Access</div></div>";Object.keys(cats).forEach(function(cat){var es=cats[cat];html+="<div class=\'sec-hdr\' style=\'margin-top:8px;\'><div class=\'sec-title\' style=\'font-size:13px;\'>"+esc(cat)+"</div><div class=\'sec-count\'>"+es.length+" account"+(es.length!==1?"s":"")+"</div></div>";es.forEach(function(e){html+="<div class=\'entry\'><div class=\'entry-name\'>"+esc(e.name)+"</div>";if(e.user)html+="<div class=\'field\'><div class=\'field-label\'>Username</div><div class=\'field-val\'>"+esc(e.user)+"</div></div>";if(e.pw)html+="<div class=\'field\'><div class=\'field-label\'>Password</div><div class=\'field-val\'>"+esc(e.pw)+"</div></div>";if(e.url)html+="<div class=\'field\'><div class=\'field-label\'>URL</div><div class=\'field-val\'>"+esc(e.url)+"</div></div>";if(e.notes)html+="<div class=\'field\'><div class=\'field-label\'>Notes</div><div class=\'field-val\'>"+esc(e.notes)+"</div></div>";html+="</div>";});});html+="</div>";}if((data.privateNames||[]).length>0){html+="<div class=\'section\'><div class=\'sec-hdr\'><div class=\'sec-title\'>Private Accounts &mdash; Names Only</div></div>";data.privateNames.forEach(function(e){html+="<div class=\'private-entry\'>&#128274; "+esc(e.name)+(e.cat?" &mdash; "+esc(e.cat):"")+"<br><span style=\'color:#2a4060;font-size:11px;\'>Credentials withheld by owner instruction</span></div>";});html+="</div>";}html+="<div class=\'section\'><div class=\'sec-hdr\'><div class=\'sec-title\'>Access Audit</div></div><div class=\'audit\'>Document opened: "+new Date().toLocaleString()+"<br>Executor: "+esc(name)+"<br>Document created: "+esc(data.created||"")+"</div></div>";doc.innerHTML=html;}</script></body></html>';
+  var blob=new Blob([html],{type:'text/html'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='VaultKey-Executor-Document-'+new Date().toISOString().slice(0,10)+'.json';
+  a.download='VaultKey-Estate-Document-'+new Date().toISOString().slice(0,10)+'.html';
   a.click();
   document.getElementById('exExportCodeDisplay').textContent=code;
   document.getElementById('exExportCode3Wrap').style.display='block';
-  toast('Executor document generated',true);
+  toast('Estate document generated — send the .html file to your executor',true);
 }
 
 // ══════════════════════════════════════════════════════════════════
