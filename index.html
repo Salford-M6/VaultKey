@@ -413,10 +413,38 @@ body.light-mode .vhdr{background:rgba(240,244,248,.98);height:64px;}
   .hdrbtn-hide-mobile{display:none !important;}
   .hdrbtn{padding:5px 8px;font-size:11px;height:30px;}
   .vlogo-text{font-size:16px;}
+
+  /* ── Welcome / tier screen ── */
+  .brand-name{font-size:36px !important;}
+  .brand-tagline{font-size:14px !important;}
+  .brand-shield{font-size:44px !important;}
+  .tier-grid{grid-template-columns:1fr 1fr;}
+  .tier-name{font-size:16px !important;}
+  .tier-price{font-size:14px !important;}
+  .tier-feature{font-size:13px !important;}
+  .tier-card{padding:14px 12px !important;}
+  #tierScreen .card{padding:24px 16px !important;}
+  #tierScreen [style*="font-size:13px"]{font-size:15px !important;}
+
+  /* ── Setup / lock screens ── */
+  .flabel{font-size:13px !important;}
+  .finput{font-size:16px !important;}
+  .btn{font-size:15px !important;padding:14px !important;}
+  .infobox{font-size:14px !important;}
+  .ltab{font-size:13px !important;}
+  .brand-lockup .brand-name{font-size:36px !important;}
+  .brand-lockup .brand-tagline{font-size:13px !important;}
+
+  /* ── Vault entries ── */
+  .entry-name,.ename{font-size:15px !important;}
+  .entry-meta,.emeta{font-size:13px !important;}
 }
 @media(max-width:480px){
   .vsearch{display:none;}
-  .card{padding:20px 16px;border-radius:12px;}
+  .card{padding:18px 14px;border-radius:12px;}
+  .brand-name{font-size:32px !important;}
+  .tier-grid{grid-template-columns:1fr 1fr;}
+  .tier-name{font-size:15px !important;}
 }
 .ex-field{background:var(--surface2);border:1px solid var(--border);border-radius:var(--btn-radius);padding:10px 12px;}
 .ex-field-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
@@ -966,7 +994,7 @@ addEventListener('DOMContentLoaded',function(){
     <div class="brand-tagline">Digital Estate Security · AES-256 · Works Offline</div>
   </div>
 
-  <div style="font-size:13px;color:var(--muted2);text-align:center;margin-bottom:16px;line-height:1.6;">
+  <div style="font-size:14px;color:var(--muted2);text-align:center;margin-bottom:16px;line-height:1.6;">
     Choose the plan that fits your needs. Your vault is encrypted locally — nothing leaves your device.
   </div>
 
