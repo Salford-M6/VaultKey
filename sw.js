@@ -1,5 +1,5 @@
 "use strict";
-var CACHE = "vaultkey-v22";
+var CACHE = "vaultkey-v28";
 self.addEventListener("install", function(e) { self.skipWaiting(); });
 self.addEventListener("activate", function(e) {
   e.waitUntil(
